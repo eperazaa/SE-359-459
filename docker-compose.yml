@@ -1,0 +1,16 @@
+#Be sure to change volumn location
+#start:   docker-compose up -d
+#stop:    docker-compse down
+
+version: '3.7'
+services:
+    nosql:
+        container_name: extremers-mongo
+        image: mongo
+        volumes: 
+            - "./src/main/resources/mongo:/docker-entrypoint-initdb.d/"
+        restart: always
+        ports:
+            - 27017:27017
+        environment:
+            MONGO_INITDB_DATABASE: extremers-clean-sweep
