@@ -20,7 +20,7 @@ public class ExtremersApplication {
 
     @Bean
     public CommandLineRunner navigateNodes(RecordLogRepository repository) {
-        log.info("--- printRecordLogs ---");
+        log.info("--- printNavigateNodes ---");
         return (args) -> {
                       
 
