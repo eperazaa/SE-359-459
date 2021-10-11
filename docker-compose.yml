@@ -11,6 +11,6 @@ services:
             - "./src/main/resources/mongo:/docker-entrypoint-initdb.d/"
         restart: always
         ports:
-            - 27018:27018
+            - 27017:27017
         environment:
             MONGO_INITDB_DATABASE: extremers-clean-sweep
