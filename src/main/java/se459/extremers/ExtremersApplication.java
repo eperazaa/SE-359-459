@@ -18,6 +18,17 @@ import se459.extremers.logger.RecordLogRepository;
 public class ExtremersApplication {
 	private static final Logger log = LoggerFactory.getLogger(ExtremersApplication.class);
 
+    @Bean
+    public CommandLineRunner navigateNodes(RecordLogRepository repository) {
+        log.info("--- printRecordLogs ---");
+        return (args) -> {
+                      
+
+
+            log.info("---");
+        };
+    }
+
 	@Bean
     public CommandLineRunner printRecordLogs(RecordLogRepository repository) {
         log.info("--- printRecordLogs ---");
