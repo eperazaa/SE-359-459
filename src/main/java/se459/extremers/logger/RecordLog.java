@@ -1,33 +1,23 @@
 package se459.extremers.logger;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import javax.persistence.*;
 
-import javax.persistence.Id;
+// @Table(name = "logs")
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Document(collection = "logs")
+@Entity
 public class RecordLog {
     @Id
-    private String id;
-    private String content;
-
-    /*
-        Sample RecordLog
-        RecordLog(
-            id=1,
-            content={
-                "action":"SWEEP",
-                "type":"ERROR",
-                "message":"Ran out of power during Sweep operation",
-                "createdOn":"2021-10-11T11:21:50.217542"
-            }
-        )
-    */
+    @GeneratedValue
+    private long id;
+    
+    private String action;
+    private String logType;
+    private String surface;
+    private String node;
+    private String message;
+    private LocalDateTime createdOn;
 }
