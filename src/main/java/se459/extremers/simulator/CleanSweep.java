@@ -18,9 +18,7 @@ public class CleanSweep {
     public static void main(String args[]) throws FileNotFoundException {
        
 
-        SensorArray sa;
-       
-       
+        SensorArray sa = new SensorArray();
             
         File file = new File("./src/test/file.csv");
         
@@ -38,8 +36,16 @@ public class CleanSweep {
             boolean dirt_sensor= Boolean.parseBoolean(tokens[6]); //whether there is dirt
             SurfaceEnum surface_sensor=  SurfaceEnum.valueOf(tokens[7]);  //kind of surface
             boolean charging_station=  Boolean.parseBoolean(tokens[8]); //whether there is a charging station
-
-         
+            
+            // Because the sensor array is unaware of the floor type it is moving to, the battery reduction for traversal has to be done here
+            if (sa.surface_sensor != null) {
+                // Manage power for traversal: remove average of last surface and current surface
+                sa.RemoveCharge((sa.surface_sensor.getUnits() + surface_sensor.getUnits())/2f);
+                System.out.println("Capacity after traversal = " + sa.GetCharge());
+                System.out.println( );
+            }
+            
+            float battery_capacity = sa.GetCharge(); // Get battery capacity from last sa, or get default value of 250 if first iteration
 
             System.out.print(id + "- ");
             System.out.print(n_sensor.toString() + " | ");
@@ -51,8 +57,9 @@ public class CleanSweep {
             System.out.print(surface_sensor.toString() + " | ");
             System.out.println(charging_station); 
 
+            
 
-            sa = new SensorArray(n_sensor,s_sensor,e_sensor,w_sensor,bottom_sensor,dirt_sensor,surface_sensor,charging_station);
+            sa = new SensorArray(n_sensor,s_sensor,e_sensor,w_sensor,bottom_sensor,dirt_sensor,surface_sensor,charging_station, battery_capacity);
             addCell(sa);
             clean(sa);
             traverse(sa);
@@ -98,7 +105,9 @@ public class CleanSweep {
   
 
     private static void traverse(SensorArray sa) {
+        System.out.println("Capacity before traversal = " + sa.GetCharge());
         System.out.println("Traversing...");
+
         switch (direction) {
             case EAST:
                 if (sa.e_sensor.equals(PathOptionsEnum.OPEN) /*&& !visited(row, col + new Integer(1)) */) 
@@ -145,9 +154,6 @@ public class CleanSweep {
             default:
                 break;
         }
-      
-
-
     }
 
    /*  private static boolean visited(Integer i, Integer j) {
@@ -156,8 +162,13 @@ public class CleanSweep {
     } */
 
     private static void clean(SensorArray sa) {
-        
+        System.out.println("Capacity before clean = " + sa.GetCharge());
         System.out.println("Cleaning...");
+
+        // remove battery charge depending on current floor type
+        sa.RemoveCharge(sa.surface_sensor.getUnits());
+
+        System.out.println("Capacity after clean = " + sa.GetCharge());
     }
 
     public static void moveNorth() {
