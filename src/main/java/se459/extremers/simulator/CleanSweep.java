@@ -5,26 +5,28 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import se459.extremers.cleanSweepFloorPlan.CleanSweepNode;
 
 public class CleanSweep {
-    static int row = 0;
-    static int col = 0;
-    static int maxI= 0;
-    static int maxJ= 0;
-    private static HashMap<String, String> floorPlan = new HashMap<String, String>();  //TODO:  Replace String for BuiltMapNode or SensorArray
+    static int row = 0; //initial or current row
+    static int col = 0; //initial or current col
+    static int maxI= 0; //max number of rows
+    static int maxJ= 0; //max number of cols
+    private static HashMap<CellIndex, String> floorPlan = new HashMap<CellIndex, String>();  //TODO:  Replace String for BuiltMapNode or SensorArray
     
     static NavigationOptionsEnum direction = NavigationOptionsEnum.EAST;
+
+
     public static void main(String args[]) throws FileNotFoundException {
        
+        simulateFromFile("./src/test/file.csv");
+    }
+    
+    
+    public static void simulateFromFile(String filepath) throws FileNotFoundException {
 
         SensorArray sa;
-       
-       
-            
-        File file = new File("./src/test/file.csv");
         
-        Scanner scanner = new Scanner(file);
+        Scanner scanner = new Scanner(new File(filepath));
         
         while(scanner.hasNext()){
             String[] tokens = scanner.nextLine().split(",");
@@ -67,18 +69,18 @@ public class CleanSweep {
          System.out.println( floorPlan );
          System.out.println( "--------------------------------------");
          printFloorPlan();
-        
- 
+
+
     }
 
-    private static void printFloorPlan() {
+    public static void printFloorPlan() {
         System.out.println("MAX ROW: " + maxI);
         System.out.println("MAX COL: " + maxJ);
-        String key = "";
-        String value = "";
+        CellIndex key = null;
+        String value = null;
         for (int i = 0; i < maxI; i++) {
             for (int j = 0; j < maxJ; j++) {
-                key = i +"," + j;
+                key = new CellIndex(i,j);
                 value = (String)floorPlan.get(key);
                 System.out.print(value);
                 System.out.print(" | ");
@@ -87,17 +89,18 @@ public class CleanSweep {
         }
     }
 
-    private static void addCell(SensorArray sa) {
+    public static void addCell(SensorArray sa) {
         
-        String key = row +"," + col;
-        floorPlan.put(key, row + "x" + col);
+        //String key = row +"," + col;
+        CellIndex ci = new CellIndex(row, col);
+        floorPlan.put(ci, row +"," + col);
 
          //TODO:  Replace String for BuiltMapNode
     }
 
   
 
-    private static void traverse(SensorArray sa) {
+    public static void traverse(SensorArray sa) {
         System.out.println("Traversing...");
         switch (direction) {
             case EAST:
@@ -155,16 +158,16 @@ public class CleanSweep {
         return floorPlan.containsKey((i * maxColumns) + j);
     } */
 
-    private static void clean(SensorArray sa) {
+    public static void clean(SensorArray sa) {
         
         System.out.println("Cleaning...");
     }
 
-    public static void moveNorth() {
+    private static void moveNorth() {
         System.out.println("N");
         CleanSweep.row--;
     }
-    public static void moveSouth() {
+    private static void moveSouth() {
         System.out.println("S");
         CleanSweep.row++;
         setMaxRow();
@@ -174,7 +177,7 @@ public class CleanSweep {
         if (row > maxI) maxI = row;
     }
 
-    public static void moveEast() {
+    private static void moveEast() {
         System.out.println("E");
         CleanSweep.col++;
         setMaxCol();
@@ -184,7 +187,7 @@ public class CleanSweep {
         if (col > maxJ) maxJ = col;
     }
 
-    public static void moveWest(){
+    private static void moveWest(){
         System.out.println("W");
         CleanSweep.col--;
     }

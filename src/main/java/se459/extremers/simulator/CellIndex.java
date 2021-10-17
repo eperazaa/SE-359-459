@@ -22,9 +22,18 @@ public String toString () {
 @Override
     public boolean equals(Object obj)
     {
+        if(obj == null || this.getClass() != obj.getClass())
+            return false; 
         return ((CellIndex)obj).row == this.row && ((CellIndex)obj).col == this.col;    
-        }
+    }
 
 
+
+
+
+@Override
+public int hashCode()
+{
+    return row ^ col;
 }
-
+}
