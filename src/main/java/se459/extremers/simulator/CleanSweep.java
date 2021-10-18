@@ -7,25 +7,25 @@ import java.util.Scanner;
 
 
 public class CleanSweep {
-    static int row = 0; //initial or current row
-    static int col = 0; //initial or current col
-    static int maxI= 0; //max number of rows
-    static int maxJ= 0; //max number of cols
-    private static HashMap<CellIndex, String> floorPlan = new HashMap<CellIndex, String>();  //TODO:  Replace String for BuiltMapNode or SensorArray
-    
-    static NavigationOptionsEnum direction = NavigationOptionsEnum.EAST;
+    private int row = 0; //initial or current row
+    private int col = 0; //initial or current col
+    private int maxI= 0; //max number of rows
+    private int maxJ= 0; //max number of cols
+    private  HashMap<CellIndex, String> floorPlan = new HashMap<CellIndex, String>();  //TODO:  Replace String for BuiltMapNode or SensorArray
+
+    private NavigationOptionsEnum direction = NavigationOptionsEnum.EAST;
+    private  SensorArray sa;
 
 
-    public static void main(String args[]) throws FileNotFoundException {
-       
-        simulateFromFile("./src/test/file.csv");
-    }
-    
-    
-    public static void simulateFromFile(String filepath) throws FileNotFoundException {
+    // public  void main(String args[]) throws FileNotFoundException {
+//
+  //      simulateFromFile("./src/test/file.csv");
+    //}
 
-        SensorArray sa;
-        
+    
+    public  void simulateFromFile(String filepath) throws FileNotFoundException {
+
+
         Scanner scanner = new Scanner(new File(filepath));
         
         while(scanner.hasNext()){
@@ -73,7 +73,8 @@ public class CleanSweep {
 
     }
 
-    public static void printFloorPlan() {
+
+    public  void printFloorPlan() {
         System.out.println("MAX ROW: " + maxI);
         System.out.println("MAX COL: " + maxJ);
         CellIndex key = null;
@@ -89,8 +90,13 @@ public class CleanSweep {
         }
     }
 
-    public static void addCell(SensorArray sa) {
-        
+
+    public HashMap<CellIndex, String> getFloorPlan() {
+        return floorPlan;
+    }
+
+    public  void addCell(SensorArray sa) {
+
         //String key = row +"," + col;
         CellIndex ci = new CellIndex(row, col);
         floorPlan.put(ci, row +"," + col);
@@ -100,31 +106,37 @@ public class CleanSweep {
 
   
 
-    public static void traverse(SensorArray sa) {
-        System.out.println("Traversing...");
+    public  void traverse(SensorArray sa) {
+        System.out.println("Traversing..." + direction.toString());
         switch (direction) {
             case EAST:
                 if (sa.e_sensor.equals(PathOptionsEnum.OPEN) /*&& !visited(row, col + new Integer(1)) */) 
                 {
                     moveEast();
 
-                } else 
+                }
+                else
                 {  
                     if (sa.s_sensor.equals(PathOptionsEnum.OPEN)) {
-                        CleanSweep.direction = NavigationOptionsEnum.SOUTH;
+                      //  CleanSweep.direction = NavigationOptionsEnum.SOUTH;
+                      direction = NavigationOptionsEnum.SOUTH;
+
                         moveSouth();
                     }
+
                 }   
                 break;
             case SOUTH:
                 if (sa.w_sensor.equals(PathOptionsEnum.OPEN)) {
-                    CleanSweep.direction = NavigationOptionsEnum.WEST;
+                    //CleanSweep.
+                    direction = NavigationOptionsEnum.WEST;
                     moveWest();
 
                 } else 
                 {
                     if (sa.e_sensor.equals(PathOptionsEnum.OPEN)) {
-                        CleanSweep.direction = NavigationOptionsEnum.EAST;
+                       // CleanSweep.
+                        direction = NavigationOptionsEnum.EAST;
                         moveEast();
                     } 
                 }
@@ -136,7 +148,8 @@ public class CleanSweep {
 
                 } else {
                     if (sa.s_sensor.equals(PathOptionsEnum.OPEN)) {
-                        CleanSweep.direction = NavigationOptionsEnum.SOUTH;
+                        //CleanSweep.
+                        direction = NavigationOptionsEnum.SOUTH;
                         moveSouth();
                     }
                 } 
@@ -153,43 +166,54 @@ public class CleanSweep {
 
     }
 
-   /*  private static boolean visited(Integer i, Integer j) {
+   /*  private  boolean visited(Integer i, Integer j) {
         
         return floorPlan.containsKey((i * maxColumns) + j);
     } */
 
-    public static void clean(SensorArray sa) {
+    public  void clean(SensorArray sa) {
         
         System.out.println("Cleaning...");
     }
 
-    private static void moveNorth() {
+    public  void moveNorth() {
         System.out.println("N");
-        CleanSweep.row--;
+        //CleanSweep.
+                row--;
     }
-    private static void moveSouth() {
+    public  void moveSouth() {
         System.out.println("S");
-        CleanSweep.row++;
+        //CleanSweep.
+                row++;
         setMaxRow();
     }
 
-    private static void setMaxRow() {
+    public  void setMaxRow() {
         if (row > maxI) maxI = row;
     }
 
-    private static void moveEast() {
+    public  void moveEast() {
         System.out.println("E");
-        CleanSweep.col++;
+        //CleanSweep.
+                col++;
         setMaxCol();
         
     }
-    private static void setMaxCol() {
+    public  void setMaxCol() {
         if (col > maxJ) maxJ = col;
     }
 
-    private static void moveWest(){
+    public  void moveWest(){
         System.out.println("W");
-        CleanSweep.col--;
+        //CleanSweep.
+                col--;
     }
-    
+
+    public int getMaxI() {
+        return maxI;
+    }
+
+    public int getMaxJ() {
+        return maxJ;
+    }
 }
