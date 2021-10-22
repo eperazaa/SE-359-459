@@ -1,21 +1,39 @@
 package se459.extremers.cleanSweepFloorPlan;
 
 public class CleanSweepNode  {
-	int roomNumber;
-	int surface;
-	int dirt;
+	int id;
+	surfaceType surface;
+	boolean dirt;
 	boolean obstacle;
 	
-	edgeType northEdge;
-	edgeType eastEdge ;
-	edgeType westEdge;
-	edgeType southEdge;
+	edgeType northEdge, eastEdge, westEdge, southEdge;
+	CleanSweepNode northNode, eastNode, southNode, westNode;
 
-	public CleanSweepNode(int roomNumber, int surface, boolean obstacle, int dirt) {
-		this.roomNumber= roomNumber;
+	public CleanSweepNode() {
+		this.northNode =  null;
+		this.eastNode = null;
+		this.southNode = null;
+		this.westNode = null;
+	}
+
+
+	public CleanSweepNode(int id, surfaceType surface, boolean obstacle, boolean dirt, 
+						  edgeType northEdge, edgeType southEdge, edgeType eastEdge, edgeType westEdge, 
+						  CleanSweepNode northNode, CleanSweepNode eastNode, CleanSweepNode southNode, CleanSweepNode westNode) {
+		this.id= id;
 		this.surface = surface;
 		this.obstacle = obstacle;
-		this.dirt = dirt;	
+		this.dirt = dirt;
+		
+		this.northEdge = northEdge;
+		this.eastEdge = eastEdge;
+		this.southEdge = southEdge;
+		this.westEdge = westEdge;
+
+		this.northNode = northNode;
+		this.eastNode = eastNode;
+		this.southNode = southNode;
+		this.westEdge = westEdge;
 	}
 
 	

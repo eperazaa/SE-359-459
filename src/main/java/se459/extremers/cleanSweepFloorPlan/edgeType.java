@@ -1,5 +1,30 @@
 package se459.extremers.cleanSweepFloorPlan;
 
 public enum edgeType {
-	wall,stairs,blank,door
+	UNKNOWN, 
+    OPEN,
+    OBSTACLE,
+    STAIRS;
+
+    public static edgeType getEnumValue(String string) {
+        edgeType result;
+        switch (string) {
+            case "OPEN":
+                result  = edgeType.OPEN;
+                break;
+            
+            case "OBSTACLE":
+                result  = edgeType.OBSTACLE;
+                break;
+            case "STAIRS":
+                result  = edgeType.STAIRS;
+                break;
+        
+            default:
+             result  = edgeType.UNKNOWN;
+             break;
+        }
+        
+        return result;
+    }
 }
