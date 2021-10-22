@@ -11,10 +11,19 @@ public class mainTest {
         int maxCol = 4;
         int maxRow = 5;
         HomeMatrix homeMatrix = new HomeMatrix();
+        CleanSweepRobot robot = new CleanSweepRobot();
 
         SetupFloorPlan(4, 5, homeMatrix);
         PrintFloorPlan(homeMatrix);
 
+        // Map out the floor plan
+        CleanSweepNode node = homeMatrix.GetNodeFromXY(0, 0);
+        while (node != null) {
+            robot.VisitNode(node);
+            CleanSweepNode newNode = homeMatrix.GetNodeFromNodeAndDirection(node, robot.direction);
+
+            node = newNode;
+        } 
 
     }
 
@@ -23,7 +32,7 @@ public class mainTest {
 
         for (int I = 0; I < homeMatrix.GetHeight(); ++I) {
             for (int J = 0; J < homeMatrix.GetWidth(); ++J) {
-                CleanSweepNode currNode = homeMatrix.GetNode(J, I);
+                CleanSweepNode currNode = homeMatrix.GetNodeFromXY(J, I);
 
                 int northID;
                 int eastID;
@@ -62,13 +71,14 @@ public class mainTest {
                     currID = -1;
                 }
 
-
+                //System.out.print("| NodeID: " + currID + " ");
                 System.out.println("Node ID: " + currID);
                 System.out.println(" Connections = (N:" + northID + " E:" + eastID + " S:" + southID + " W:" + westID +")");
                 System.out.println(" Edges = (N:" + currNode.northEdge + " E:" + currNode.eastEdge + " S:" + currNode.southEdge + " W:" + currNode.westEdge +")");
             }
-        }
             System.out.println();
+        }
+        System.out.println();
 
     }
 

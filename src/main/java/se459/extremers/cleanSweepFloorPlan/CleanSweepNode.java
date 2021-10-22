@@ -5,6 +5,7 @@ public class CleanSweepNode  {
 	surfaceType surface;
 	boolean dirt;
 	boolean obstacle;
+	boolean visited;
 	
 	edgeType northEdge, eastEdge, westEdge, southEdge;
 	CleanSweepNode northNode, eastNode, southNode, westNode;

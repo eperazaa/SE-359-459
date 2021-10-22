@@ -4,18 +4,18 @@ package se459.extremers.cleanSweepFloorPlan;
 // I made a few changed and fixed a major issue
 public class HomeMatrix {
 	private int Width, Height;
-    private CleanSweepNode Reference, RowIterator, ColumnIterator, Head;
+    private CleanSweepNode Reference, RowIterator, ColumnIterator;
    
 
     public void Matrix(int Width, int Height) {
         Reference = new CleanSweepNode();
-		Head = Reference;
         this.Width = Width; 
 		this.Height = Height;
         RowIterator = ColumnIterator = Reference;
        
         for (int I = 0; I < Height; ++I) {
             for (int J = 0; J < Width; ++J) {
+				// if we are on first row
                 if (I == 0) {
                     if (J < Width - 1) {
                         RowIterator.eastNode = new CleanSweepNode();
@@ -25,23 +25,21 @@ public class HomeMatrix {
                 }
                 else {  
                     if (J < Width - 1) {
-                        //if (J == 0) {
-                        //    RowIterator.northNode = ColumnIterator;
-                        //}
-
                         RowIterator.eastNode = new CleanSweepNode();
                         RowIterator.northNode.southNode = RowIterator;
                         RowIterator.eastNode.westNode = RowIterator;
                         RowIterator.eastNode.northNode = RowIterator.northNode.eastNode;
                         RowIterator = RowIterator.eastNode;
                     }
+					else {
+						RowIterator.northNode.southNode = RowIterator;
+					}
                 }
             }
            
             if (I < Height - 1) {
                 ColumnIterator.southNode = new CleanSweepNode();
 				ColumnIterator.southNode.northNode = ColumnIterator;
-                //RowIterator = ColumnIterator = ColumnIterator.southNode;
 				ColumnIterator = ColumnIterator.southNode;
 				RowIterator = ColumnIterator;
             }
@@ -81,7 +79,7 @@ public class HomeMatrix {
         return Height;
     }
 
-	public CleanSweepNode GetNode(int x, int y) {
+	public CleanSweepNode GetNodeFromXY(int x, int y) {
 			RowIterator = Reference;
        
         for (int I = 0; I < y; ++I) {
@@ -94,5 +92,45 @@ public class HomeMatrix {
        
         return RowIterator;
 	}
+
+	public CleanSweepNode GetNodeFromNodeAndDirection(CleanSweepNode node, NavigationOptionsEnum direction) {
+		RowIterator = Reference;
+
+		for (int y = 0; y < this.Height; ++y) {
+            for (int x = 0; x < this.Width; ++x) {
+				CleanSweepNode tmp = GetNodeFromXY(x, y);
+
+				if(tmp == node) {
+
+                    CleanSweepNode nodeToReturn = new CleanSweepNode();
+
+					switch (direction){
+						case EAST:
+							nodeToReturn = RowIterator.eastNode;
+                            break;
+						case SOUTH:
+                            nodeToReturn = RowIterator.southNode;
+                            break;
+						case WEST:
+                            nodeToReturn = RowIterator.westNode;
+                            break;
+						case NORTH:
+                            nodeToReturn = RowIterator.northNode;
+                            break;
+						default:
+							break;
+					}
+
+                    // TODO I don't want to revisit node right now but that might change
+                    if (nodeToReturn == null || nodeToReturn.visited) {
+                        break;
+                    }
+
+                    return nodeToReturn;
+				}
+			}
+		}
+		return null;
+}
 	
 }
