@@ -26,13 +26,30 @@ public class CleanSweepRobot {
     }
 
 
-    public void VisitNode(CleanSweepNode node) {
+    public void MapInitalLayout(HomeMatrix homeMatrix) {
 
-        // Plan:
-        // Add node to visted list
-        // Spiral application
-            // Prefer order of E->S->W->N
-        // Loop and check node open in order and call get node from floor plan once moved
+        // Map out the floor plan
+        CleanSweepNode node = homeMatrix.GetNodeFromXY(0, 4);
+        while (node != null) {
+
+            // Plan:
+            // Add node to visted list
+            // Spiral application
+                // Prefer order of E->S->W->N
+            // Loop and check node open in order and call get node from floor plan once moved
+
+            this.VisitNode(node);
+            //this.DecideNextDirection(node);
+
+            CleanSweepNode newNode = homeMatrix.GetNodeFromNodeAndDirection(node, this.direction);
+
+            node = newNode;
+        } 
+
+
+    }
+
+    public void VisitNode(CleanSweepNode node) {
 
         if (!this.visitedNodes.contains(node)){
             this.visitedNodes.add(node);
@@ -41,13 +58,16 @@ public class CleanSweepRobot {
 
         System.out.println("Visited Node with ID: " + node.id);
 
+    }
 
+    public void DecideNextDirection(CleanSweepNode node) {
+        
         /* 
          This loop checks if the direction we last moved in is still open. If it is, continute in that direction.
          If it's not open, change direction to the next in the order (E, S, W, N) and check there. Continue until open 
          direction is found
         */
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
 
             boolean foundDirection = false;
 
@@ -75,33 +95,16 @@ public class CleanSweepRobot {
                     break;
             
                 default:
-                    System.out.println("Found End! :D");
                     break;
             }
             if (foundDirection) {
                 break;
             }
 
-            // if direction from previous traversal is blocked, change direction to next in order (E, S, W, N)
-            switch (this.direction) {
-                case EAST:
-                    this.direction = NavigationOptionsEnum.SOUTH;
-                    break;
-                case SOUTH:
-                    this.direction = NavigationOptionsEnum.WEST;
-                    break;
-                case WEST:
-                    this.direction = NavigationOptionsEnum.NORTH;
-                    break;
-                case NORTH:
-                    this.direction = NavigationOptionsEnum.EAST;
-                    break;
-                default:
-                    break;
-            }
+            // Rotate enum through order (E, S, W, N) if we have not found direction
+            this.direction = NavigationOptionsEnum.RotateDirection(this.direction);
 
         }
-
     }
 
 }

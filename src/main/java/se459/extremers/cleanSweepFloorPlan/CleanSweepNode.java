@@ -15,6 +15,7 @@ public class CleanSweepNode  {
 		this.eastNode = null;
 		this.southNode = null;
 		this.westNode = null;
+		this.visited = false;
 	}
 
 
