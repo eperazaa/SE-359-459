@@ -4,7 +4,8 @@ public enum edgeType {
 	UNKNOWN, 
     OPEN,
     OBSTACLE,
-    STAIRS;
+    STAIRS,
+    DOOR;
 
     public static edgeType getEnumValue(String string) {
         edgeType result;
@@ -19,7 +20,9 @@ public enum edgeType {
             case "STAIRS":
                 result  = edgeType.STAIRS;
                 break;
-        
+            case "DOOR":
+                result  = edgeType.DOOR;
+                break;
             default:
              result  = edgeType.UNKNOWN;
              break;

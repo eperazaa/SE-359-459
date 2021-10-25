@@ -21,29 +21,34 @@ public class mainTest {
 
 
         // This is the external map of the house that the robot is not aware of
-        int maxCol = 4;
-        int maxRow = 5;
-        FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow);
+        int maxCol = 7;
+        int maxRow = 6;
+        FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/HouseTest.csv");
         
         // This is where we connect the two and start
         //CleanSweepNode startingPoint = externalFloorPlan.GetStartingNode();
         CleanSweepNode startingPoint = externalFloorPlan.GetNodeFromXY(0, 0);
 
         CleanSweepRobot robot = new CleanSweepRobot(externalFloorPlan,startingPoint);
-        for (Point pos: robot.internalFloorPlan.map.keySet()) {
+
+        /*
+        //Testing
+        for (Point pos: robot.internalFloorPlan.doors.keySet()) {
             String key = "Key (X: " + pos.getX() + " Y: " + pos.getY() + ")";
-            String value = "Value (Node ID: " + robot.internalFloorPlan.map.get(pos).id + ")";
+            String value = "Value (Node ID: " + robot.internalFloorPlan.doors.get(pos).id + ")";
             System.out.println(key + " " + value);
         }
+        */
+        
 
     }
 
 
-    private static void PrintFloorPlan(HomeMatrix homeMatrix) {
+    private static void PrintFloorPlan(FloorPlanExternal floorPlan) {
 
-        for (int I = 0; I < homeMatrix.GetHeight(); ++I) {
-            for (int J = 0; J < homeMatrix.GetWidth(); ++J) {
-                CleanSweepNode currNode = homeMatrix.GetNodeFromXY(J, I);
+        for (int I = 0; I < floorPlan.GetHeight(); ++I) {
+            for (int J = 0; J < floorPlan.GetWidth(); ++J) {
+                CleanSweepNode currNode = floorPlan.GetNodeFromXY(J, I);
 
                 int northID;
                 int eastID;

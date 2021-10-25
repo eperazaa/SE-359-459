@@ -7,12 +7,14 @@ import org.springframework.data.geo.Point;
 public class FloorPlanInternal extends FloorPlan {
     
     HashMap<Point,CleanSweepNode> map;
+    HashMap<Point,CleanSweepNode> doors;
     CleanSweepNode lastDiscovered;
 
     public FloorPlanInternal() {
         this.Reference = null;
         this.RowIterator = this.ColumnIterator = this.Reference;
         this.map = new HashMap<Point,CleanSweepNode>();
+        this.doors = new HashMap<Point,CleanSweepNode>();
     }
 
     public void Add(CleanSweepNode node, Point pos) {
@@ -24,14 +26,15 @@ public class FloorPlanInternal extends FloorPlan {
 
             this.map.put(pos, node);
             this.lastDiscovered = node;
+            CheckForDoor(pos, node);
         }
         // for sucessive nodes, add to map, check around node for connections
         else {
 
             this.map.put(pos, node);
+            CheckForDoor(pos, node);
 
             // Check around node and create connections
-
             // Check north
             CleanSweepNode tmp = map.get(GetNorthPos(pos));
             if(tmp != null) {
@@ -56,6 +59,45 @@ public class FloorPlanInternal extends FloorPlan {
                 tmp.eastNode = node;
                 node.westNode = tmp;
             }
+        }
+    }
+
+    private void CheckForDoor(Point pos, CleanSweepNode node) {
+        // Each time we visit a node, we want to check if it has a door so we can visit it later
+        NavigationOptionsEnum tmp = NavigationOptionsEnum.EAST;
+
+        for (int i = 0; i < 4; i++) {
+            boolean foundDoor = false;
+            switch (tmp) {
+                case EAST:
+                    if (node.eastEdge == edgeType.DOOR) {
+                        foundDoor = true;
+                    }
+                    break;
+                case SOUTH:
+                    if (node.southEdge == edgeType.DOOR) {
+                        foundDoor = true;
+                    }
+                    break; 
+                case WEST:
+                    if (node.westEdge == edgeType.DOOR) {
+                        foundDoor = true;
+                    }
+                    break; 
+                case NORTH:
+                    if (node.northEdge == edgeType.DOOR) {
+                        foundDoor = true;
+                    }
+                    break;
+                default:
+                    break;
+
+            }
+            if (foundDoor) {
+                doors.put(pos,node);
+            }
+
+            tmp = NavigationOptionsEnum.RotateDirection(tmp);
         }
     }
 

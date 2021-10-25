@@ -3,9 +3,11 @@ package se459.extremers.cleanSweepFloorPlan;
 public class CleanSweepNode  {
 	int id;
 	surfaceType surface;
-	boolean dirt;
+	int dirt;
+	boolean isClean;
 	boolean obstacle;
 	boolean visited;
+	boolean isChargingStation;
 	
 	edgeType northEdge, eastEdge, westEdge, southEdge;
 	CleanSweepNode northNode, eastNode, southNode, westNode;
@@ -19,26 +21,19 @@ public class CleanSweepNode  {
 	}
 
 
-	public CleanSweepNode(int id, surfaceType surface, boolean obstacle, boolean dirt, 
-						  edgeType northEdge, edgeType southEdge, edgeType eastEdge, edgeType westEdge, 
-						  CleanSweepNode northNode, CleanSweepNode eastNode, CleanSweepNode southNode, CleanSweepNode westNode) {
-		this.id= id;
-		this.surface = surface;
-		this.obstacle = obstacle;
-		this.dirt = dirt;
-		
-		this.northEdge = northEdge;
-		this.eastEdge = eastEdge;
-		this.southEdge = southEdge;
-		this.westEdge = westEdge;
+	public CleanSweepNode(int id, edgeType northEdge, edgeType southEdge, edgeType eastEdge, edgeType westEdge, 
+				boolean clean, surfaceType surface, boolean chargingStation) {
+			this.id= id;
+			this.surface = surface;
+			this.isClean = clean;
+			
+			this.northEdge = northEdge;
+			this.eastEdge = eastEdge;
+			this.southEdge = southEdge;
+			this.westEdge = westEdge;
 
-		this.northNode = northNode;
-		this.eastNode = eastNode;
-		this.southNode = southNode;
-		this.westEdge = westEdge;
-	}
-
-	
+			this.isChargingStation = chargingStation;
+		}	
 }
 
 

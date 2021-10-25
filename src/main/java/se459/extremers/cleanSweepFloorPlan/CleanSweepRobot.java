@@ -10,7 +10,6 @@ public class CleanSweepRobot {
     int dirtCapacity;
     NavigationOptionsEnum direction;
 
-    List<CleanSweepNode> doors;
     FloorPlanInternal internalFloorPlan;
     CleanSweepNode currentNode;
     Point position;

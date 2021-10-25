@@ -6,23 +6,23 @@ import java.util.Scanner;
 
 public class FloorPlanExternal extends FloorPlan {
 
-    public FloorPlanExternal(int width, int height) throws FileNotFoundException {
+    public FloorPlanExternal(int width, int height, String path) throws FileNotFoundException {
         this.Width = width;
         this.Height = height;
         Reference = new CleanSweepNode();
         RowIterator = ColumnIterator = Reference;
 
-        this.SetupFloorPlan();
+        this.SetupFloorPlan(path);
     }
 
-    public void SetupFloorPlan() throws FileNotFoundException {
+    public void SetupFloorPlan(String path) throws FileNotFoundException {
         
         int currCol = 0;
         int currRow = 0;
 
         this.CreateLinkedList(this.Width, this.Height);
         
-        Scanner scanner = new Scanner(new File("./src/test/file copy.csv"));
+        Scanner scanner = new Scanner(new File(path));
         while(scanner.hasNext()){
             String[] tokens = scanner.nextLine().split(",");
             String id = tokens[0];
@@ -36,7 +36,7 @@ public class FloorPlanExternal extends FloorPlan {
             surfaceType surface_sensor=  surfaceType.valueOf(tokens[7]);  //kind of surface
             boolean charging_station=  Boolean.parseBoolean(tokens[8]); //whether there is a charging station
 
-            CleanSweepNode tmp = new CleanSweepNode(Integer.parseInt(id), surface_sensor, bottom_sensor, dirt_sensor, n_sensor, s_sensor, e_sensor, w_sensor, null, null, null, null);
+            CleanSweepNode tmp = new CleanSweepNode(Integer.parseInt(id), n_sensor, s_sensor, e_sensor, w_sensor, dirt_sensor, surface_sensor, charging_station);
 
             this.SetValues(currCol, currRow, tmp);
 
