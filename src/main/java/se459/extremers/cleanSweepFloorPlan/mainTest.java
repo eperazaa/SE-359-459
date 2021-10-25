@@ -1,10 +1,13 @@
 package se459.extremers.cleanSweepFloorPlan;
 
+import org.springframework.data.geo.Point;
 import java.io.FileNotFoundException;
+import java.util.*;
 
 public class mainTest {
     public static void main(String[] args) throws FileNotFoundException{
     
+        /*
         int maxCol = 4;
         int maxRow = 5;
         HomeMatrix homeMatrix = new HomeMatrix(maxCol, maxRow);
@@ -14,6 +17,25 @@ public class mainTest {
         PrintFloorPlan(homeMatrix);
 
         robot.MapInitalLayout(homeMatrix);
+        */
+
+
+        // This is the external map of the house that the robot is not aware of
+        int maxCol = 4;
+        int maxRow = 5;
+        FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow);
+        
+        // This is where we connect the two and start
+        //CleanSweepNode startingPoint = externalFloorPlan.GetStartingNode();
+        CleanSweepNode startingPoint = externalFloorPlan.GetNodeFromXY(0, 0);
+
+        CleanSweepRobot robot = new CleanSweepRobot(externalFloorPlan,startingPoint);
+        for (Point pos: robot.internalFloorPlan.map.keySet()) {
+            String key = "Key (X: " + pos.getX() + " Y: " + pos.getY() + ")";
+            String value = "Value (Node ID: " + robot.internalFloorPlan.map.get(pos).id + ")";
+            System.out.println(key + " " + value);
+        }
+
     }
 
 

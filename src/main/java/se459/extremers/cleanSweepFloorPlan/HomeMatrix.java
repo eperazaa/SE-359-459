@@ -175,7 +175,6 @@ public class HomeMatrix {
                         // TODO: I don't want to revisit node right now but that might change
                         if (nodeToReturn.visited) {
                             direction = NavigationOptionsEnum.RotateDirection(direction);
-                            node.direction = direction;
                         }
                         else {
                             break;
