@@ -28,13 +28,13 @@ public class FloorPlanInternal {
 
             this.map.put(pos, node);
             this.lastDiscovered = node;
-            CheckForDoor(pos, node);
+            //CheckForDoor(pos, node);
         }
         // for sucessive nodes, add to map, check around node for connections
         else {
 
             this.map.put(pos, node);
-            CheckForDoor(pos, node);
+            //CheckForDoor(pos, node);
 
             // Check around node and create connections
             // Check north
@@ -64,6 +64,7 @@ public class FloorPlanInternal {
         }
     }
 
+    /*
     private void CheckForDoor(Point pos, CleanSweepNode node) {
         // Each time we visit a node, we want to check if it has a door so we can visit it later
         NavigationOptionsEnum tmp = NavigationOptionsEnum.EAST;
@@ -101,7 +102,7 @@ public class FloorPlanInternal {
 
             tmp = NavigationOptionsEnum.RotateDirection(tmp);
         }
-    }
+    } */
 
     public CleanSweepNode GetNorthNode(Point pos) {
         try {

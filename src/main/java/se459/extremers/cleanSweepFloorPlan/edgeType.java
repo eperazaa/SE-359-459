@@ -3,9 +3,7 @@ package se459.extremers.cleanSweepFloorPlan;
 public enum edgeType {
 	UNKNOWN, 
     OPEN,
-    OBSTACLE,
-    STAIRS,
-    DOOR;
+    OBSTACLE;
 
     public static edgeType getEnumValue(String string) {
         edgeType result;
@@ -18,10 +16,7 @@ public enum edgeType {
                 result  = edgeType.OBSTACLE;
                 break;
             case "STAIRS":
-                result  = edgeType.STAIRS;
-                break;
-            case "DOOR":
-                result  = edgeType.DOOR;
+                result  = edgeType.OBSTACLE;
                 break;
             default:
              result  = edgeType.UNKNOWN;

@@ -15,7 +15,8 @@ public class mainTest {
         //PrintFloorPlan(externalFloorPlan);
         
         // This is where we connect the two and start
-        CleanSweepNode startingPoint = externalFloorPlan.GetNodeFromXY(0, 0);
+        CleanSweepNode startingPoint = externalFloorPlan.GetNodeFromXY(0, 4);
+
         CleanSweepRobot robot = new CleanSweepRobot(externalFloorPlan,startingPoint);
 
         /*
