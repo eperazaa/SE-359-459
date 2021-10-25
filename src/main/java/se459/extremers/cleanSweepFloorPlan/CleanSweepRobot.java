@@ -43,13 +43,28 @@ public class CleanSweepRobot {
                 - If so, traverse to next tile, decrement power based on the acutual cost,
                   and loop process.
             */
+
+            // IDEA FOR MAKING SURE WE VIST THE ENTIRE ROOM
+            // Create a hashMap that stores position (x,y) of OPEN edges that we have not visited yet, each new node we visist, check if 
+            // that pos in in the map. If so, remove it. When we "finish" the room. Check the list to make sure any we have passed
+            // we have visited.
+
+            // TRAVERSAL
+            // Implement A* pathfinding
+            // This would be used for many things: calculate return to home, calculate path to door, calcualte path to unvisted tiles in room
             
             this.VisitNode(node);
-            this.DecideNextDirection();
-            node = externalFloorPlan.GetNodeFromNodeAndDirection(node, this.direction);
+
+            // When this is true, there is an unvisited node in one of the 4 directions around current node
+            if (this.DecideNextDirection()) {
+                node = externalFloorPlan.GetNodeFromNodeAndDirection(node, this.direction);
+            }
+            // TODO: When this is false, we should traverse to first door on hashmap
+            else {
+                node = null;
+            }
         } 
-
-
+        System.out.println("Finished first room. Shutting down...");
     }
 
 
@@ -64,7 +79,7 @@ public class CleanSweepRobot {
 
     }
 
-    public void DecideNextDirection() {
+    public boolean DecideNextDirection() {
         
         /* 
          This loop checks if the direction we last moved in is still open. If it is, continute in that direction.
@@ -113,31 +128,33 @@ public class CleanSweepRobot {
             this.direction = NavigationOptionsEnum.RotateDirection(this.direction);
 
         }
-        // If we get here, the robot is surrounded by visted nodes. For now, we will print that we are done
-        //TODO: from here, leave room and go to doors
-        if (foundDirection == false) {
-            System.out.println("Vistied Entire Room. Shutting down...");
-           // System.exit(0);
-        }
 
-        // After direction is found, change position to relfect new node
-        switch (this.direction) {
-            case EAST:
-                this.position = this.internalFloorPlan.GetEastPos(this.position);
-                break;
-            case SOUTH:
-                this.position = this.internalFloorPlan.GetSouthPos(this.position);
-                break;
-            case WEST:
-                this.position = this.internalFloorPlan.GetWestPos(this.position);
-                break;
-            case NORTH:
-                this.position = this.internalFloorPlan.GetNorthPos(this.position);
-                break;
 
-            default:
-                break;
+        if (foundDirection) {
+
+            // After direction is found, change position to relfect new node
+            switch (this.direction) {
+                case EAST:
+                    this.position = this.internalFloorPlan.GetEastPos(this.position);
+                    break;
+                case SOUTH:
+                    this.position = this.internalFloorPlan.GetSouthPos(this.position);
+                    break;
+                case WEST:
+                    this.position = this.internalFloorPlan.GetWestPos(this.position);
+                    break;
+                case NORTH:
+                    this.position = this.internalFloorPlan.GetNorthPos(this.position);
+                    break;
+
+                default:
+                    break;
+            }
+            return true;
         }
+        return false;
+
+        
     }
 
 }

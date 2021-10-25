@@ -8,24 +8,64 @@ public class FloorPlanExternal{
 
     int Width, Height;
     CleanSweepNode Reference, RowIterator, ColumnIterator;
+    String path;
 
-    public FloorPlanExternal(int width, int height, String path) throws FileNotFoundException {
+    public FloorPlanExternal(int width, int height, String Path) throws FileNotFoundException {
         this.Width = width;
         this.Height = height;
+        this.path = Path;
         Reference = new CleanSweepNode();
         RowIterator = ColumnIterator = Reference;
 
-        this.SetupFloorPlan(path);
+        this.SetupFloorPlan();
     }
 
-    public void SetupFloorPlan(String path) throws FileNotFoundException {
+    public void SetupFloorPlan() throws FileNotFoundException {
         
+        this.CreateLinkedList();
+        this.PopulateNodesFromCSV();
+    }
+
+    // base of code taken from: https://villavu.com/forum/showthread.php?t=95319
+    public void CreateLinkedList() {
+        for (int I = 0; I < this.Height; ++I) {
+            for (int J = 0; J < this.Width; ++J) {
+				// if we are on first row
+                if (I == 0) {
+                    if (J < this.Width - 1) {
+                        RowIterator.eastNode = new CleanSweepNode();
+                        RowIterator.eastNode.westNode = RowIterator;
+                        RowIterator = RowIterator.eastNode;
+                    }
+                }
+                else {  
+                    if (J < this.Width - 1) {
+                        RowIterator.eastNode = new CleanSweepNode();
+                        RowIterator.northNode.southNode = RowIterator;
+                        RowIterator.eastNode.westNode = RowIterator;
+                        RowIterator.eastNode.northNode = RowIterator.northNode.eastNode;
+                        RowIterator = RowIterator.eastNode;
+                    }
+					else {
+						RowIterator.northNode.southNode = RowIterator;
+					}
+                }
+            }
+           
+            if (I < Height - 1) {
+                ColumnIterator.southNode = new CleanSweepNode();
+				ColumnIterator.southNode.northNode = ColumnIterator;
+				ColumnIterator = ColumnIterator.southNode;
+				RowIterator = ColumnIterator;
+            }
+        }
+    }
+
+    private void PopulateNodesFromCSV() throws FileNotFoundException {
         int currCol = 0;
         int currRow = 0;
-
-        this.CreateLinkedList(this.Width, this.Height);
         
-        Scanner scanner = new Scanner(new File(path));
+        Scanner scanner = new Scanner(new File(this.path));
         while(scanner.hasNext()){
             String[] tokens = scanner.nextLine().split(",");
             String id = tokens[0];
@@ -60,14 +100,6 @@ public class FloorPlanExternal{
         }
     }
 
-    public int GetWidth() {
-        return Width;
-    }
-   
-    public int GetHeight() {
-        return Height;
-    }
-
     public CleanSweepNode GetNodeFromXY(int x, int y) {
         RowIterator = Reference;
    
@@ -80,40 +112,6 @@ public class FloorPlanExternal{
         }
     
         return RowIterator;
-    }
-    
-    public void CreateLinkedList(int Width, int Height) {
-        for (int I = 0; I < Height; ++I) {
-            for (int J = 0; J < Width; ++J) {
-				// if we are on first row
-                if (I == 0) {
-                    if (J < Width - 1) {
-                        RowIterator.eastNode = new CleanSweepNode();
-                        RowIterator.eastNode.westNode = RowIterator;
-                        RowIterator = RowIterator.eastNode;
-                    }
-                }
-                else {  
-                    if (J < Width - 1) {
-                        RowIterator.eastNode = new CleanSweepNode();
-                        RowIterator.northNode.southNode = RowIterator;
-                        RowIterator.eastNode.westNode = RowIterator;
-                        RowIterator.eastNode.northNode = RowIterator.northNode.eastNode;
-                        RowIterator = RowIterator.eastNode;
-                    }
-					else {
-						RowIterator.northNode.southNode = RowIterator;
-					}
-                }
-            }
-           
-            if (I < Height - 1) {
-                ColumnIterator.southNode = new CleanSweepNode();
-				ColumnIterator.southNode.northNode = ColumnIterator;
-				ColumnIterator = ColumnIterator.southNode;
-				RowIterator = ColumnIterator;
-            }
-        }
     }
     
     public CleanSweepNode GetNodeFromNodeAndDirection(CleanSweepNode node, NavigationOptionsEnum direction) {
@@ -145,29 +143,38 @@ public class FloorPlanExternal{
 		}
 		return null;
     }
+  
 
     public void SetValues(int X, int Y, CleanSweepNode copyReference) {
-        RowIterator = Reference;
+        CleanSweepNode iterator = Reference;
        
         for (int I = 0; I < Y; ++I) {
-            RowIterator = RowIterator.southNode;
+            iterator = iterator.southNode;
         }
        
         for (int J = 0; J < X; ++J) {
-            RowIterator = RowIterator.eastNode;
+            iterator = iterator.eastNode;
         }
        
-		// this is probably a really bad way of doing this
-		RowIterator.id = copyReference.id;
-        RowIterator.northEdge = copyReference.northEdge;
-		RowIterator.eastEdge = copyReference.eastEdge;
-		RowIterator.southEdge = copyReference.southEdge;
-		RowIterator.westEdge = copyReference.westEdge;
+		// this is probably a bad way of doing this
+		iterator.id = copyReference.id;
+        iterator.northEdge = copyReference.northEdge;
+		iterator.eastEdge = copyReference.eastEdge;
+		iterator.southEdge = copyReference.southEdge;
+		iterator.westEdge = copyReference.westEdge;
 
-		RowIterator.surface = copyReference.surface;
-		RowIterator.dirt = copyReference.dirt;
-		RowIterator.obstacle = copyReference.obstacle;
+		iterator.surface = copyReference.surface;
+		iterator.dirt = copyReference.dirt;
+		iterator.obstacle = copyReference.obstacle;
 
 	}
+
+    public int GetWidth() {
+        return this.Width;
+    }
+   
+    public int GetHeight() {
+        return this.Height;
+    }
     
 }

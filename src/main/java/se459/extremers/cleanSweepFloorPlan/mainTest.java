@@ -7,28 +7,15 @@ import java.util.*;
 public class mainTest {
     public static void main(String[] args) throws FileNotFoundException{
     
-        /*
-        int maxCol = 4;
-        int maxRow = 5;
-        HomeMatrix homeMatrix = new HomeMatrix(maxCol, maxRow);
-        CleanSweepRobot robot = new CleanSweepRobot();
-
-        homeMatrix.SetupFloorPlan();
-        PrintFloorPlan(homeMatrix);
-
-        robot.MapInitalLayout(homeMatrix);
-        */
-
-
         // This is the external map of the house that the robot is not aware of
         int maxCol = 7;
         int maxRow = 6;
         FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/HouseTest.csv");
+
+        //PrintFloorPlan(externalFloorPlan);
         
         // This is where we connect the two and start
-        //CleanSweepNode startingPoint = externalFloorPlan.GetStartingNode();
         CleanSweepNode startingPoint = externalFloorPlan.GetNodeFromXY(0, 0);
-
         CleanSweepRobot robot = new CleanSweepRobot(externalFloorPlan,startingPoint);
 
         /*
@@ -39,8 +26,6 @@ public class mainTest {
             System.out.println(key + " " + value);
         }
         */
-        
-
     }
 
 
