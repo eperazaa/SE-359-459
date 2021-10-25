@@ -19,6 +19,9 @@ public class FloorPlanInternal {
 
     public void Add(CleanSweepNode node, Point pos) {
 
+        // Creates new copy of passed external node
+        node = new CleanSweepNode(node);
+
         // for first node, make it the reference node and add to map 
         if (this.Reference == null) {
             this.Reference = node;

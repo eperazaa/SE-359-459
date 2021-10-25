@@ -45,7 +45,7 @@ public class CleanSweepRobot {
             */
 
             // IDEA FOR MAKING SURE WE VIST THE ENTIRE ROOM
-            // Create a hashMap that stores position (x,y) of OPEN edges that we have not visited yet, each new node we visist, check if 
+            // Create a HashMap that stores position (x,y) of OPEN edges that we have not visited yet, each new node we visit, check if 
             // that pos in in the map. If so, remove it. When we "finish" the room. Check the list to make sure any we have passed
             // we have visited.
 

@@ -8,9 +8,9 @@ public class mainTest {
     public static void main(String[] args) throws FileNotFoundException{
     
         // This is the external map of the house that the robot is not aware of
-        int maxCol = 7;
-        int maxRow = 6;
-        FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/HouseTest.csv");
+        int maxCol = 4;
+        int maxRow = 5;
+        FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/file copy.csv");
 
         //PrintFloorPlan(externalFloorPlan);
         

@@ -23,17 +23,35 @@ public class CleanSweepNode  {
 
 	public CleanSweepNode(int id, edgeType northEdge, edgeType southEdge, edgeType eastEdge, edgeType westEdge, 
 				boolean clean, surfaceType surface, boolean chargingStation) {
-			this.id= id;
-			this.surface = surface;
-			this.isClean = clean;
+		this.id= id;
+		this.surface = surface;
+		this.isClean = clean;
 			
-			this.northEdge = northEdge;
-			this.eastEdge = eastEdge;
-			this.southEdge = southEdge;
-			this.westEdge = westEdge;
+		this.northEdge = northEdge;
+		this.eastEdge = eastEdge;
+		this.southEdge = southEdge;
+		this.westEdge = westEdge;
 
-			this.isChargingStation = chargingStation;
-		}	
+		this.isChargingStation = chargingStation;
+	}
+	
+	public CleanSweepNode(CleanSweepNode node) {
+		this.id= node.id;
+		this.surface = node.surface;
+		this.isClean = node.isClean;
+			
+		this.northEdge = node.northEdge;
+		this.eastEdge = node.eastEdge;
+		this.southEdge = node.southEdge;
+		this.westEdge = node.westEdge;
+
+		this.isChargingStation = node.isChargingStation;
+
+		this.northNode = null;
+		this.eastNode = null;
+		this.southNode=null;
+		this.westNode = null;
+	}
 }
 
 
