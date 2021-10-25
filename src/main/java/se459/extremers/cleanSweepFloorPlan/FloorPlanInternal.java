@@ -4,15 +4,15 @@ import java.util.*;
 
 import org.springframework.data.geo.Point;
 
-public class FloorPlanInternal extends FloorPlan {
+public class FloorPlanInternal {
     
     HashMap<Point,CleanSweepNode> map;
     HashMap<Point,CleanSweepNode> doors;
     CleanSweepNode lastDiscovered;
+    CleanSweepNode Reference;
 
     public FloorPlanInternal() {
         this.Reference = null;
-        this.RowIterator = this.ColumnIterator = this.Reference;
         this.map = new HashMap<Point,CleanSweepNode>();
         this.doors = new HashMap<Point,CleanSweepNode>();
     }
@@ -22,7 +22,6 @@ public class FloorPlanInternal extends FloorPlan {
         // for first node, make it the reference node and add to map 
         if (this.Reference == null) {
             this.Reference = node;
-            this.RowIterator = this.ColumnIterator = this.Reference;
 
             this.map.put(pos, node);
             this.lastDiscovered = node;
