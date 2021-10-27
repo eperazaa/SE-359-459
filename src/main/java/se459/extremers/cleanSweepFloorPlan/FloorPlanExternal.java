@@ -124,7 +124,7 @@ public class FloorPlanExternal{
 				CleanSweepNode tmp = GetNodeFromXY(x, y);
 
                 // When node is found return new node in direction
-				if(tmp == node) {
+				if(tmp.equals(node)) {
                     for (int i = 0; i < 4; i++) {
                         switch (direction){
                             case EAST:

@@ -8,14 +8,14 @@ public class mainTest {
     public static void main(String[] args) throws FileNotFoundException{
     
         // This is the external map of the house that the robot is not aware of
-        int maxCol = 4;
-        int maxRow = 5;
-        FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/file copy.csv");
+        int maxCol = 7;
+        int maxRow = 6;
+        FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/HouseTest.csv");
 
         //PrintFloorPlan(externalFloorPlan);
         
         // This is where we connect the two and start
-        CleanSweepNode startingPoint = externalFloorPlan.GetNodeFromXY(3, 4);
+        CleanSweepNode startingPoint = externalFloorPlan.GetNodeFromXY(0, 0);
 
         CleanSweepRobot robot = new CleanSweepRobot(externalFloorPlan,startingPoint);
 

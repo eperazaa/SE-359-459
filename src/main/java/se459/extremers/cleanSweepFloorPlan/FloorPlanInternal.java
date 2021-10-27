@@ -7,7 +7,7 @@ import org.springframework.data.geo.Point;
 public class FloorPlanInternal {
 
     HashMap<Point, CleanSweepNode> map;
-    List<Point> unvisited;
+    Queue<Tuple> unvisited;
     HashMap<Point, CleanSweepNode> stations;
     CleanSweepNode lastDiscovered;
     CleanSweepNode Reference;
@@ -15,7 +15,7 @@ public class FloorPlanInternal {
     public FloorPlanInternal() {
         this.Reference = null;
         this.map = new HashMap<Point, CleanSweepNode>();
-        this.unvisited = new ArrayList<Point>();
+        this.unvisited = new LinkedList<Tuple>();
         this.stations = new HashMap<Point, CleanSweepNode>();
     }
 
@@ -47,53 +47,89 @@ public class FloorPlanInternal {
         // Gets north position of node
         Point checkPos = GetNorthPos(pos);
         // Attemps to get north node if it exists in hash map. If so, create connections.
-        CleanSweepNode tmp = map.get(checkPos);
-        if (tmp != null) {
-            tmp.AssignSouthInternal(node);
-            node.AssignNorthInternal(tmp);
+        CleanSweepNode tmpNode = map.get(checkPos);
+        Tuple tmpTuple = new Tuple(node, NavigationOptionsEnum.NORTH);
+        if (tmpNode != null) {
+            tmpNode.AssignSouthInternal(node);
+            node.AssignNorthInternal(tmpNode);
         }
-        // checks if north is open and if north position is in unvisited hashmap
-        if (node.northEdge == edgeType.OPEN && tmp == null && !this.unvisited.contains(checkPos)) {
-            this.unvisited.add(checkPos);
+        // checks if north is open and if north position is in unvisited queue
+        if (node.northEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+            this.unvisited.add(tmpTuple);
         }
 
         // Check east
         checkPos = GetEastPos(pos);
-        tmp = map.get(checkPos);
-        if (tmp != null) {
-            tmp.AssignWestInternal(node);
-            node.AssignEastInternal(tmp);
+        tmpNode = map.get(checkPos);
+        tmpTuple = new Tuple(node, NavigationOptionsEnum.EAST);
+        if (tmpNode != null) {
+            tmpNode.AssignWestInternal(node);
+            node.AssignEastInternal(tmpNode);
         }
-        if (node.eastEdge == edgeType.OPEN && tmp == null && !this.unvisited.contains(checkPos)) {
-            this.unvisited.add(checkPos);
+
+        if (node.eastEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+            this.unvisited.add(tmpTuple);
         }
 
         // Check south
         checkPos = GetSouthPos(pos);
-        tmp = map.get(checkPos);
-        if (tmp != null) {
-            tmp.AssignNorthInternal(node);
-            node.AssignSouthInternal(tmp);
+        tmpNode = map.get(checkPos);
+        tmpTuple = new Tuple(node, NavigationOptionsEnum.SOUTH);
+        if (tmpNode != null) {
+            tmpNode.AssignNorthInternal(node);
+            node.AssignSouthInternal(tmpNode);
         }
-        if (node.southEdge == edgeType.OPEN && tmp == null && !this.unvisited.contains(checkPos)) {
-            this.unvisited.add(checkPos);
+        if (node.southEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+            this.unvisited.add(tmpTuple);
         }
 
         // Check west
         checkPos = GetWestPos(pos);
-        tmp = map.get(checkPos);
-        if (tmp != null) {
-            tmp.AssignEastInternal(node);
-            node.AssignWestInternal(tmp);
+        tmpNode = map.get(checkPos);
+        tmpTuple = new Tuple(node, NavigationOptionsEnum.WEST);
+        if (tmpNode != null) {
+            tmpNode.AssignEastInternal(node);
+            node.AssignWestInternal(tmpNode);
         }
-        if (node.westEdge == edgeType.OPEN && tmp == null && !this.unvisited.contains(checkPos)) {
-            this.unvisited.add(checkPos);
+        if (node.westEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+            this.unvisited.add(tmpTuple);
         }
 
         // Finally, check if current node is in univisted list, if so remove it
-        if (this.unvisited.contains(pos)) {
-            this.unvisited.remove(pos);
+        NavigationOptionsEnum dirToCheck = NavigationOptionsEnum.EAST;
+        for (int i = 0; i < 4; i++) {
+            Tuple tupleToRemove;
+            switch(dirToCheck) {
+                case EAST:
+                    tupleToRemove = new Tuple(GetEastNode(pos), NavigationOptionsEnum.WEST);
+                    if(tupleToRemove.node != null && this.unvisited.contains(tupleToRemove)) {
+                        this.unvisited.remove(tupleToRemove);
+                    } 
+                    break;
+                case SOUTH:
+                    tupleToRemove = new Tuple(GetSouthNode(pos), NavigationOptionsEnum.NORTH);
+                    if(tupleToRemove.node != null && this.unvisited.contains(tupleToRemove)) {
+                        this.unvisited.remove(tupleToRemove);
+                    } 
+                    break;
+                case WEST:
+                    tupleToRemove = new Tuple(GetWestNode(pos), NavigationOptionsEnum.EAST);
+                    if(tupleToRemove.node != null && this.unvisited.contains(tupleToRemove)) {
+                        this.unvisited.remove(tupleToRemove);
+                    } 
+                    break;
+                case NORTH:
+                    tupleToRemove = new Tuple(GetNorthNode(pos), NavigationOptionsEnum.SOUTH);
+                    if(tupleToRemove.node != null && this.unvisited.contains(tupleToRemove)) {
+                        this.unvisited.remove(tupleToRemove);
+                    } 
+                    break;
+                default:
+                    break;
+            }
+            dirToCheck = NavigationOptionsEnum.RotateDirection(dirToCheck);
         }
+
         return node;
     }
 
@@ -115,11 +151,19 @@ public class FloorPlanInternal {
     }
 
     public CleanSweepNode GetSouthNode(Point pos) {
-        return this.map.get(new Point(pos.getX(), pos.getY() + 1));
+        try {
+            return this.map.get(new Point(pos.getX(), pos.getY() + 1));
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     public CleanSweepNode GetWestNode(Point pos) {
-        return this.map.get(new Point(pos.getX() - 1, pos.getY()));
+        try {
+            return this.map.get(new Point(pos.getX() - 1, pos.getY()));
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     public Point GetNorthPos(Point pos) {

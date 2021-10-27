@@ -24,6 +24,11 @@ public class CleanSweepNode  {
 	edgeType northEdge, eastEdge, westEdge, southEdge;
 	CleanSweepNode northNode, eastNode, southNode, westNode;
 
+	@Override
+    public boolean equals(Object tmp) {
+        return (this.id == ((CleanSweepNode)tmp).id);
+    }
+
 	public CleanSweepNode() {
 		this.northNode =  null;
 		this.eastNode = null;

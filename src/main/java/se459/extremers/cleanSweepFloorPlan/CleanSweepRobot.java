@@ -61,26 +61,36 @@ public class CleanSweepRobot {
             }
             // TODO: When this is false, we should traverse to first door on hashmap
             else {
-                node = Pathfind();
+
+                Tuple returnTuple = Pathfind();
+                node = externalFloorPlan.GetNodeFromNodeAndDirection(returnTuple.node, returnTuple.dir);
+
+                //Reset direction
+                this.direction = NavigationOptionsEnum.EAST;
+
+                //Set position to pathfound node
+                this.position = returnTuple.node.pos;
             }
         } 
         System.out.println("Finished. Shutting down...");
     }
 
 
-    private CleanSweepNode Pathfind() {
+    private Tuple Pathfind() {
+        System.out.println("Started pathfinding to unvisted");
 
-        for (Point pos: this.internalFloorPlan.stations.keySet()) {
-            CleanSweepNode chargingStation = this.internalFloorPlan.stations.get(pos);
-            System.out.println("Started pathfinding to station at: (" + chargingStation.pos.getX() + "," + chargingStation.pos.getY() + ") from node " + currentNode.id);
-            List<CleanSweepNode> path = this.internalFloorPlan.aStar(currentNode, this.internalFloorPlan.stations.get(pos));
+        // Use this to pathfind to nearest unvisited node
+        Tuple newPos = this.internalFloorPlan.unvisited.poll();
+        if (newPos != null ) {
+            List<CleanSweepNode> path = this.internalFloorPlan.aStar(currentNode, this.internalFloorPlan.map.get(newPos.node.pos));
             Collections.reverse(path);
-
-            
-            for(CleanSweepNode step : path) {
-                System.out.println("Visiting node: " + step.id);
+            for (CleanSweepNode steps : path) {
+                System.out.println("Pathfinding... Visited node: " + steps.id);
+                this.currentNode = steps;
             }
+            return newPos;
         }
+
         return null;
     }
 
