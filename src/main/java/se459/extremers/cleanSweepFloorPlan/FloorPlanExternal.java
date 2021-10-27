@@ -78,8 +78,9 @@ public class FloorPlanExternal{
             boolean dirt_sensor= Boolean.parseBoolean(tokens[6]); //whether there is dirt
             surfaceType surface_sensor=  surfaceType.valueOf(tokens[7]);  //kind of surface
             boolean charging_station=  Boolean.parseBoolean(tokens[8]); //whether there is a charging station
+            int dirt_level=  Integer.parseInt(tokens[9]); //whether there is a charging station
 
-            CleanSweepNode tmp = new CleanSweepNode(Integer.parseInt(id), n_sensor, s_sensor, e_sensor, w_sensor, dirt_sensor, surface_sensor, charging_station);
+            CleanSweepNode tmp = new CleanSweepNode(Integer.parseInt(id), n_sensor, s_sensor, e_sensor, w_sensor, dirt_sensor, surface_sensor, charging_station, dirt_level);
 
             this.SetValues(currCol, currRow, tmp);
 

@@ -1,12 +1,17 @@
 package se459.extremers.simulator;
 
+import java.io.FileNotFoundException;
+
 import se459.extremers.cleanSweepFloorPlan.FloorPlanExternal;
 
 public class CleanSweepSimulator {
     FloorPlanExternal extFloorPlanCopy;
 
-    public void CleanSweepSimulator(FloorPlanExternal extFloorPlan){
+    public  CleanSweepSimulator(FloorPlanExternal extFloorPlan){
         this.extFloorPlanCopy = extFloorPlan;
+    }
+    public  CleanSweepSimulator(int x, int y, String path) throws FileNotFoundException{
+        this.extFloorPlanCopy = new FloorPlanExternal(x, y, path);
     }
 
     public FloorPlanExternal getExternalFloorPlan() {

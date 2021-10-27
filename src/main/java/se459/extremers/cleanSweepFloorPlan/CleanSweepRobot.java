@@ -135,10 +135,17 @@ public class CleanSweepRobot {
     private void returnToChargingStation(ReturnReasons reason) {
         System.out.println("returning to charging station");
         recharge();
-        if (reason.equals(ReturnReasons.CAPACITY_DEFICIT))
-            dispose();
+        if (!(reason.equals(ReturnReasons.DEVICE_LOCKED) || reason.equals(ReturnReasons.HOUSE_CLEANED))){
+            if (reason.equals(ReturnReasons.CAPACITY_DEFICIT))
+                dispose();
 
-        resume(lastVisited);
+            resume(lastVisited);
+        }
+        shutdown(reason);
+    }
+
+    private void shutdown(ReturnReasons reason) {
+        System.out.println(" Shutting Down: " + reason.toString());
     }
 
     private void resume(CleanSweepNode lastVisitedNode) {
