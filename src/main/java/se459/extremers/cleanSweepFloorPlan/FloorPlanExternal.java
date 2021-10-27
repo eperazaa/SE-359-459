@@ -98,6 +98,7 @@ public class FloorPlanExternal{
                 currCol++;
             }
         }
+        System.out.println('x');
     }
 
     public CleanSweepNode GetNodeFromXY(int x, int y) {
@@ -166,6 +167,7 @@ public class FloorPlanExternal{
 		iterator.surface = copyReference.surface;
 		iterator.dirt = copyReference.dirt;
 		iterator.obstacle = copyReference.obstacle;
+        iterator.isChargingStation = copyReference.isChargingStation;
 
 	}
 

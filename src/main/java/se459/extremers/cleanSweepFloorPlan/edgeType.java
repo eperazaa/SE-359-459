@@ -11,7 +11,6 @@ public enum edgeType {
             case "OPEN":
                 result  = edgeType.OPEN;
                 break;
-            
             case "OBSTACLE":
                 result  = edgeType.OBSTACLE;
                 break;

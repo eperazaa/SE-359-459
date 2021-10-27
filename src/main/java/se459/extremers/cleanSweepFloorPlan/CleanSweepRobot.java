@@ -61,19 +61,35 @@ public class CleanSweepRobot {
             }
             // TODO: When this is false, we should traverse to first door on hashmap
             else {
-                node = null;
+                node = Pathfind();
             }
         } 
-        System.out.println("Finished first room. Shutting down...");
+        System.out.println("Finished. Shutting down...");
     }
 
+
+    private CleanSweepNode Pathfind() {
+
+        for (Point pos: this.internalFloorPlan.stations.keySet()) {
+            CleanSweepNode chargingStation = this.internalFloorPlan.stations.get(pos);
+            System.out.println("Started pathfinding to station at: (" + chargingStation.pos.getX() + "," + chargingStation.pos.getY() + ") from node " + currentNode.id);
+            List<CleanSweepNode> path = this.internalFloorPlan.aStar(currentNode, this.internalFloorPlan.stations.get(pos));
+            Collections.reverse(path);
+
+            
+            for(CleanSweepNode step : path) {
+                System.out.println("Visiting node: " + step.id);
+            }
+        }
+        return null;
+    }
 
     public void VisitNode(CleanSweepNode node) {
 
         node.visited = true;
-        this.currentNode = node;
 
-        internalFloorPlan.Add(node, position);
+        // returns new node we added to map so we can set currentNode
+        this.currentNode = internalFloorPlan.Add(node, position);
 
         System.out.println("Visited Node with ID: " + node.id);
 
