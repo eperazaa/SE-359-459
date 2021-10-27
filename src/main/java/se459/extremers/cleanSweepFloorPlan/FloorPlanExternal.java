@@ -118,13 +118,15 @@ public class FloorPlanExternal{
     public CleanSweepNode GetNodeFromNodeAndDirection(CleanSweepNode node, NavigationOptionsEnum direction) {
 		RowIterator = Reference;
 
+        
+
         // loop through linkedlist until we find node we passed in args
 		for (int y = 0; y < this.Height; ++y) {
             for (int x = 0; x < this.Width; ++x) {
 				CleanSweepNode tmp = GetNodeFromXY(x, y);
 
                 // When node is found return new node in direction
-				if(tmp == node) {
+				if(tmp.equals(node)) {
                     for (int i = 0; i < 4; i++) {
                         switch (direction){
                             case EAST:
@@ -167,6 +169,7 @@ public class FloorPlanExternal{
 		iterator.surface = copyReference.surface;
 		iterator.dirt = copyReference.dirt;
 		iterator.obstacle = copyReference.obstacle;
+        iterator.isChargingStation = copyReference.isChargingStation;
 
 	}
 

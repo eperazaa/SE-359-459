@@ -4,7 +4,7 @@ import se459.extremers.Constants;
 import se459.extremers.simulator.CleanSweepSimulator;
 
 import org.springframework.data.geo.Point;
-
+import java.util.*;
 
 public class CleanSweepRobot {
     
@@ -37,7 +37,7 @@ public class CleanSweepRobot {
     }
 
     public void cleanHouse(CleanSweepNode node) {
-        
+
 
         while (node != null) { // TODO Floor External PLan should be on the simulator and not here
 
@@ -70,6 +70,7 @@ public class CleanSweepRobot {
             // TODO: Check current power against power to closer charging station
 
 
+
             // When this is true, there is an unvisited node in one of the 4 directions around current node
             if (this.DecideNextDirection()) {
                 CleanSweepNode prevNode = node;
@@ -77,16 +78,50 @@ public class CleanSweepRobot {
                 float movePowerComsumption = calculateMovingPowerComsumption(prevNode, node);
                 decreasePower(movePowerComsumption);
             }
-            // TODO: When this is false, we should traverse to first door on hashmap
             else {
-                node = null;
+                boolean unvistedNodeExsist = TraverseToLastUnvisited();
+                if (unvistedNodeExsist) {
+                        node = this.currentNode;
+                        CleanSweepNode prevNode = node;
+
+
+                        // this is the first movement after we finish pathfinding
+                        this.DecideNextDirection(); // this is done to correctly update position
+                        node = this.myCSS.getExternalFloorPlan().GetNodeFromNodeAndDirection(node, this.direction);
+                        float movePowerComsumption = calculateMovingPowerComsumption(prevNode, node);
+                        decreasePower(movePowerComsumption);
+                }
+                else {
+                    node = null;
+                    System.out.println("All tiles visted");
+                }
+
             }
         } 
         System.out.println("Finished cleaning. Shutting down...");
     }
 
 
+    private boolean TraverseToLastUnvisited() {
+        System.out.println("Started pathfinding to unvisted");
+
+        // Use this to pathfind to nearest unvisited node
+        Tuple newPos = this.internalFloorPlan.unvisited.poll();
+
+        //reset direction
+        this.direction = NavigationOptionsEnum.EAST;
+
+        if (newPos != null) {
+            traverse(currentNode, newPos.node);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     private float calculateMovingPowerComsumption(CleanSweepNode prevNode, CleanSweepNode node) {
+
         int toSurface = node.surface.getUnits();
         int fromSurface = prevNode.surface.getUnits();
         return (float) ((fromSurface + toSurface) / 2.0);
@@ -94,9 +129,7 @@ public class CleanSweepRobot {
 
     public void VisitNode(CleanSweepNode node) {
 
-        this.currentNode = node;
-
-        internalFloorPlan.Add(node, position);
+        this.currentNode = internalFloorPlan.Add(node, position);
         node.visited = true;
         System.out.println("Visited Node with ID: " + node.id);
 
@@ -123,7 +156,7 @@ public class CleanSweepRobot {
             }
 
         } 
-        System.out.println("Cleaned Node with ID: " + node.id);
+       //System.out.println("Cleaned Node with ID: " + node.id);
 
 
     }
@@ -157,6 +190,22 @@ public class CleanSweepRobot {
 
     private void traverse(CleanSweepNode fromNode, CleanSweepNode toNode) {
         System.out.println("Traversing from " + fromNode.id + " to " + toNode.id); //no cleaning is performed but power should be managed for traversing
+        List<CleanSweepNode> path = this.internalFloorPlan.aStar(fromNode, toNode);
+
+            // Reverse list to get path from fromNode to toNode, then remove first entry since that is current node
+            Collections.reverse(path);
+            path.remove(0);
+
+            CleanSweepNode prevNode = currentNode;
+            for (CleanSweepNode steps : path) {
+                System.out.println("Pathfinding... Visited node: " + steps.id);
+                this.currentNode = steps;
+                this.position = new Point(this.position.getX() + (steps.pos.getX()-this.position.getX()), this.position.getY()+(steps.pos.getY()-this.position.getY()));
+                float movePowerComsumption = calculateMovingPowerComsumption(prevNode, currentNode);
+                decreasePower(movePowerComsumption);
+            }
+
+        
     }
 
     private void recharge() {
@@ -241,7 +290,7 @@ public class CleanSweepRobot {
 
         }
 
-
+       
         if (foundDirection) {
 
             // After direction is found, change position to relfect new node
@@ -267,6 +316,6 @@ public class CleanSweepRobot {
         return false;
 
         
-    }
+    }         
 
 }

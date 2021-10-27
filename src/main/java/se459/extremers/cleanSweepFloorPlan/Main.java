@@ -9,29 +9,20 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException{
     
         // This is the external map of the house that the robot is not aware of
-        int maxCol = 4;
-        int maxRow = 5;
+        int maxCol = 10;
+        int maxRow = 10;
         //FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/file copy.csv");
-        String path = "./src/test/externalTree_v1.csv";
+        String path = "./src/test/extTree_SampleFloorPlan.csv";
         //PrintFloorPlan(externalFloorPlan);
         
         // This is where we connect the two and start
        
         CleanSweepSimulator simulator = new CleanSweepSimulator(maxCol, maxRow, path);
-        CleanSweepNode startingPoint = simulator.getExternalFloorPlan().GetNodeFromXY(0, 4);
+        CleanSweepNode startingPoint = simulator.getExternalFloorPlan().GetNodeFromXY(0, 0);
         //simulator.loadFloorPlan(maxCol, maxRow, path);
 
         CleanSweepRobot robot = new CleanSweepRobot(simulator);
         robot.cleanHouse(startingPoint);
-
-        /*
-        //Testing
-        for (Point pos: robot.internalFloorPlan.doors.keySet()) {
-            String key = "Key (X: " + pos.getX() + " Y: " + pos.getY() + ")";
-            String value = "Value (Node ID: " + robot.internalFloorPlan.doors.get(pos).id + ")";
-            System.out.println(key + " " + value);
-        }
-        */
     }
 
 
