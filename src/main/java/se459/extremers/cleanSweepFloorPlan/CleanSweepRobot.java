@@ -1,11 +1,14 @@
 package se459.extremers.cleanSweepFloorPlan;
 
-import java.util.*;
+import se459.extremers.Constants;
+import se459.extremers.simulator.CleanSweepSimulator;
 
 import org.springframework.data.geo.Point;
 
+
 public class CleanSweepRobot {
     
+    boolean emptyMeLed;
     float batteryCharge;
     int dirtCapacity;
     NavigationOptionsEnum direction;
@@ -13,21 +16,30 @@ public class CleanSweepRobot {
     FloorPlanInternal internalFloorPlan;
     CleanSweepNode currentNode;
     Point position;
+    ModeOptions mode; //probably it wont be used. IT is just if we need to know when traversing if we are just returning or moving to door, no cleaning is neccesary
+    private CleanSweepNode lastVisited;
+    private CleanSweepSimulator myCSS;
+    
+    
 
-
-    public CleanSweepRobot(FloorPlanExternal externalFloorPlan, CleanSweepNode startingPoint) {
-        this.batteryCharge = 250f;
-        this.dirtCapacity = 50;
-        this.direction = NavigationOptionsEnum.EAST;
+    public CleanSweepRobot(CleanSweepSimulator css) {
+        this.batteryCharge = Constants.MAX_POWER_CHARGE; 
+        this.dirtCapacity = Constants.MAX_DIRT_CAPACITY; 
+        this.emptyMeLed = false;
+        this.direction = Constants.DEF_DIRECTION; 
         this.internalFloorPlan = new FloorPlanInternal();
-        this.position = new Point(0,0);
+        this.position = Constants.DEF_INITIAL_POSITION;
+        this.mode = Constants.DEF_MODE;
+        this.myCSS = css;
+        
 
-        CleanHouse(startingPoint, externalFloorPlan);
+        //cleanHouse(startingPoint, css.getExternalFloorPlan());
     }
 
-    public void CleanHouse(CleanSweepNode node, FloorPlanExternal externalFloorPlan) {
+    public void cleanHouse(CleanSweepNode node) {
+        
 
-        while (node != null) {
+        while (node != null) { // TODO Floor External PLan should be on the simulator and not here
 
             /*
              1) Visit current node and add to internal map
@@ -44,7 +56,7 @@ public class CleanSweepRobot {
                   and loop process.
             */
 
-            // IDEA FOR MAKING SURE WE VIST THE ENTIRE ROOM
+            // IDEA FOR MAKING SURE WE VISIT THE ENTIRE ROOM
             // Create a HashMap that stores position (x,y) of OPEN edges that we have not visited yet, each new node we visit, check if 
             // that pos in in the map. If so, remove it. When we "finish" the room. Check the list to make sure any we have passed
             // we have visited.
@@ -54,29 +66,122 @@ public class CleanSweepRobot {
             // This would be used for many things: calculate return to home, calculate path to door, calcualte path to unvisted tiles in room
             
             this.VisitNode(node);
+            
+            // TODO: Check current power against power to closer charging station
+
 
             // When this is true, there is an unvisited node in one of the 4 directions around current node
             if (this.DecideNextDirection()) {
-                node = externalFloorPlan.GetNodeFromNodeAndDirection(node, this.direction);
+                CleanSweepNode prevNode = node;
+                node = this.myCSS.getExternalFloorPlan().GetNodeFromNodeAndDirection(node, this.direction);
+                float movePowerComsumption = calculateMovingPowerComsumption(prevNode, node);
+                decreasePower(movePowerComsumption);
             }
             // TODO: When this is false, we should traverse to first door on hashmap
             else {
                 node = null;
             }
         } 
-        System.out.println("Finished first room. Shutting down...");
+        System.out.println("Finished cleaning. Shutting down...");
     }
 
 
+    private float calculateMovingPowerComsumption(CleanSweepNode prevNode, CleanSweepNode node) {
+        int toSurface = node.surface.getUnits();
+        int fromSurface = prevNode.surface.getUnits();
+        return (float) ((fromSurface + toSurface) / 2.0);
+    }
+
     public void VisitNode(CleanSweepNode node) {
 
-        node.visited = true;
         this.currentNode = node;
 
         internalFloorPlan.Add(node, position);
-
+        node.visited = true;
         System.out.println("Visited Node with ID: " + node.id);
 
+        this.cleanNode(node);
+       
+    }
+
+    private void cleanNode(CleanSweepNode node) {
+        this.lastVisited = node;
+        
+        while(!node.isClean) // this should be a call to the simulator
+        {
+            if ( checkCapacity())
+            {
+                if (checkPower(node.surface)) {
+                    node.decreaseDirt(); // this should be a call to the simulator
+                    this.decreasePower(node.surface.getUnits());
+                } else {
+                    returnToChargingStation(ReturnReasons.POWER_DEFICIT);
+                }
+            } else {
+                toggleEmptyMeLed();
+                returnToChargingStation(ReturnReasons.CAPACITY_DEFICIT);
+            }
+
+        } 
+        System.out.println("Cleaned Node with ID: " + node.id);
+
+
+    }
+
+    private void toggleEmptyMeLed() {
+        this.emptyMeLed = !this.emptyMeLed;
+    }
+
+    private void returnToChargingStation(ReturnReasons reason) {
+        System.out.println("returning to charging station");
+        recharge();
+        if (reason.equals(ReturnReasons.CAPACITY_DEFICIT))
+            dispose();
+
+        resume(lastVisited);
+    }
+
+    private void resume(CleanSweepNode lastVisitedNode) {
+        traverse(this.currentNode, lastVisitedNode);
+        cleanHouse(lastVisitedNode);
+
+
+    }
+
+    private void traverse(CleanSweepNode fromNode, CleanSweepNode toNode) {
+        System.out.println("Traversing from " + fromNode.id + " to " + toNode.id); //no cleaning is performed but power should be managed for traversing
+    }
+
+    private void recharge() {
+        this.batteryCharge = Constants.MAX_POWER_CHARGE;
+    }
+
+    private void dispose(){
+        this.dirtCapacity = Constants.MAX_DIRT_CAPACITY;
+        toggleEmptyMeLed();
+    }
+
+    private void decreasePower(float units) {
+        this.batteryCharge = this.batteryCharge - units;
+    }
+
+    private boolean checkCapacity() {
+        return (this.dirtCapacity > 0);
+    }
+
+    private boolean checkPower(surfaceType surface) {
+        boolean checkResult = false;
+        int powerToReturn = calculatePowerToReturn();
+        int powerToBeUsed = surface.getUnits();
+        
+        if (this.batteryCharge - powerToReturn - powerToBeUsed > 0)
+            checkResult = true;
+        
+            return checkResult;
+    }
+
+    private int calculatePowerToReturn() {
+        return 0;
     }
 
     public boolean DecideNextDirection() {

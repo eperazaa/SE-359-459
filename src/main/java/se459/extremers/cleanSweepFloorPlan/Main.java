@@ -1,10 +1,13 @@
 package se459.extremers.cleanSweepFloorPlan;
 
 import org.springframework.data.geo.Point;
+
+import se459.extremers.simulator.CleanSweepSimulator;
+
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class mainTest {
+public class Main {
     public static void main(String[] args) throws FileNotFoundException{
     
         // This is the external map of the house that the robot is not aware of
@@ -16,8 +19,10 @@ public class mainTest {
         
         // This is where we connect the two and start
         CleanSweepNode startingPoint = externalFloorPlan.GetNodeFromXY(0, 4);
+        CleanSweepSimulator simulator = new CleanSweepSimulator();
 
-        CleanSweepRobot robot = new CleanSweepRobot(externalFloorPlan,startingPoint);
+        CleanSweepRobot robot = new CleanSweepRobot(simulator);
+        robot.cleanHouse(startingPoint);
 
         /*
         //Testing

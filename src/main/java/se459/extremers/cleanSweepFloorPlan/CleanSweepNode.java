@@ -52,6 +52,19 @@ public class CleanSweepNode  {
 		this.southNode=null;
 		this.westNode = null;
 	}
+
+
+    public boolean decreaseDirt() {
+		if (this.dirt > 0){
+			this.dirt--;
+			if (this.dirt == 0 ) this.isClean = true; 
+		}
+		return isClean();
+    }
+
+	public boolean isClean(){
+		return this.isClean;
+	}
 }
 
 
