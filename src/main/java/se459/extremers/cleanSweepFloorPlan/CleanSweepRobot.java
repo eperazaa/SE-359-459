@@ -19,7 +19,9 @@ public class CleanSweepRobot {
     ModeOptions mode; //probably it wont be used. IT is just if we need to know when traversing if we are just returning or moving to door, no cleaning is neccesary
     private CleanSweepNode lastVisited;
     private CleanSweepSimulator myCSS;
-    
+
+    // stats for testing
+    int tripsToStation;    
     
 
     public CleanSweepRobot(CleanSweepSimulator css) {
@@ -32,8 +34,7 @@ public class CleanSweepRobot {
         this.mode = Constants.DEF_MODE;
         this.myCSS = css;
         
-
-        //cleanHouse(startingPoint, css.getExternalFloorPlan());
+        this.tripsToStation = 0;
     }
 
     public void cleanHouse(CleanSweepNode node) {
@@ -99,11 +100,16 @@ public class CleanSweepRobot {
             }
         } 
         System.out.println("Finished cleaning. Shutting down...");
+        System.out.println("Ending power ammount = " + this.batteryCharge);
+        System.out.println("Ending capacity ammount = " + this.dirtCapacity);
+        System.out.println("Total trips back to station = " + this.tripsToStation);
+
+        //TODO: Change this. Without this line, execution continues past end... investigate
+        System.exit(0);
     }
 
 
     private boolean TraverseToLastUnvisited() {
-        System.out.println("Started pathfinding to unvisted");
 
         // Use this to pathfind to nearest unvisited node
         Tuple newPos = this.internalFloorPlan.unvisited.poll();
@@ -112,6 +118,7 @@ public class CleanSweepRobot {
         this.direction = NavigationOptionsEnum.EAST;
 
         if (newPos != null) {
+            System.out.println("Started pathfinding to unvisted");
             traverse(currentNode, newPos.node);
             return true;
         }
@@ -129,7 +136,9 @@ public class CleanSweepRobot {
 
     public void VisitNode(CleanSweepNode node) {
 
-        this.currentNode = internalFloorPlan.Add(node, position);
+        node = internalFloorPlan.Add(node, position);
+        this.currentNode = node;
+        
         node.visited = true;
         System.out.println("Visited Node with ID: " + node.id);
 
@@ -146,7 +155,9 @@ public class CleanSweepRobot {
             {
                 if (checkPower(node.surface)) {
                     node.decreaseDirt(); // this should be a call to the simulator
+
                     this.decreasePower(node.surface.getUnits());
+                    this.decreaseCapcity(node.dirt);
                 } else {
                     returnToChargingStation(ReturnReasons.POWER_DEFICIT);
                 }
@@ -166,13 +177,16 @@ public class CleanSweepRobot {
     }
 
     private void returnToChargingStation(ReturnReasons reason) {
-        System.out.println("returning to charging station");
+        System.out.println("returning to charging station for reason " + reason.toString());
+        tripsToStation++;
+        CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.stations.getFirst();
+        traverse(this.currentNode, lastVistedChargingStation);
         recharge();
         if (!(reason.equals(ReturnReasons.DEVICE_LOCKED) || reason.equals(ReturnReasons.HOUSE_CLEANED))){
             if (reason.equals(ReturnReasons.CAPACITY_DEFICIT))
                 dispose();
 
-            resume(lastVisited);
+            resume(this.lastVisited);
         }
         shutdown(reason);
     }
@@ -219,6 +233,10 @@ public class CleanSweepRobot {
 
     private void decreasePower(float units) {
         this.batteryCharge = this.batteryCharge - units;
+    }
+
+    private void decreaseCapcity(int dirt) {
+        this.dirtCapacity = this.dirtCapacity - dirt;
     }
 
     private boolean checkCapacity() {

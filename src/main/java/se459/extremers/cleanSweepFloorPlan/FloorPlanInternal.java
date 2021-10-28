@@ -8,7 +8,7 @@ public class FloorPlanInternal {
 
     HashMap<Point, CleanSweepNode> map;
     LinkedList<Tuple> unvisited;
-    HashMap<Point, CleanSweepNode> stations;
+    LinkedList<CleanSweepNode> stations;
     CleanSweepNode lastDiscovered;
     CleanSweepNode Reference;
 
@@ -16,7 +16,7 @@ public class FloorPlanInternal {
         this.Reference = null;
         this.map = new HashMap<Point, CleanSweepNode>();
         this.unvisited = new LinkedList<Tuple>();
-        this.stations = new HashMap<Point, CleanSweepNode>();
+        this.stations = new LinkedList<CleanSweepNode>();
     }
 
     public CleanSweepNode Add(CleanSweepNode node, Point pos) {
@@ -26,7 +26,7 @@ public class FloorPlanInternal {
 
         // check if charging station
         if (node.isChargingStation) {
-            this.stations.put(pos, node);
+            this.stations.addFirst(node);
         }
 
         // for first node, make it the reference node and add to map
@@ -244,7 +244,19 @@ public class FloorPlanInternal {
         }
         nodes.add(start);
 
+        ResetNodeValues(start, goal);
+
         return nodes;
+    }
+
+    private void ResetNodeValues(CleanSweepNode start, CleanSweepNode goal) {
+
+        start.parent = goal.parent = null;
+        start.f = goal.f = 0;
+        start.g = goal.g = 0;
+        start.h = goal.h = 0;
+        start.cost = goal.cost = 0;
+
     }
 
     public int estimateDistance(CleanSweepNode node1, CleanSweepNode node2) {
