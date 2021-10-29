@@ -7,20 +7,20 @@ import java.util.Scanner;
 
 
 public class CleanSweep {
-    private int row = 0; //initial or current row
-    private int col = 0; //initial or current col
-    private int maxI= 0; //max number of rows
-    private int maxJ= 0; //max number of cols
+    private static int row = 0; //initial or current row
+    private static int col = 0; //initial or current col
+    private static int maxI= 0; //max number of rows
+    private static int maxJ= 0; //max number of cols
     private  HashMap<CellIndex, String> floorPlan = new HashMap<CellIndex, String>();  //TODO:  Replace String for BuiltMapNode or SensorArray
 
     static float batteryCharge = 250f;
     static int dirtCapacity = 50;
 
-    private NavigationOptionsEnum direction = NavigationOptionsEnum.EAST;
-    private  SensorArray sa;
+    private static NavigationOptionsEnum direction = NavigationOptionsEnum.EAST;
+    private static SensorArray sa;
 
 
-     public  void main(String args[]) throws FileNotFoundException {
+    public  void main(String args[]) throws FileNotFoundException {
 
         simulateFromFile("./src/test/file.csv");
     }
@@ -212,44 +212,44 @@ public class CleanSweep {
         System.out.println("Capacity after clean = " + GetCharge());
     }
 
-    public  void moveNorth() {
+    public static void moveNorth() {
         System.out.println("N");
         //CleanSweep.
                 row--;
     }
-    public  void moveSouth() {
+    public static void moveSouth() {
         System.out.println("S");
         //CleanSweep.
                 row++;
         setMaxRow();
     }
 
-    public  void setMaxRow() {
+    public static void setMaxRow() {
         if (row > maxI) maxI = row;
     }
 
-    public  void moveEast() {
+    public static void moveEast() {
         System.out.println("E");
         //CleanSweep.
                 col++;
         setMaxCol();
         
     }
-    public  void setMaxCol() {
+    public static void setMaxCol() {
         if (col > maxJ) maxJ = col;
     }
 
-    public  void moveWest(){
+    public static void moveWest(){
         System.out.println("W");
         //CleanSweep.
                 col--;
     }
 
-    public int getMaxI() {
+    public static int getMaxI() {
         return maxI;
     }
 
-    public int getMaxJ() {
+    public static  int getMaxJ() {
         return maxJ;
     }
     
