@@ -13,18 +13,22 @@ public class CleanSweep {
     private int maxJ= 0; //max number of cols
     private  HashMap<CellIndex, String> floorPlan = new HashMap<CellIndex, String>();  //TODO:  Replace String for BuiltMapNode or SensorArray
 
+    static float batteryCharge = 250f;
+    static int dirtCapacity = 50;
+
     private NavigationOptionsEnum direction = NavigationOptionsEnum.EAST;
     private  SensorArray sa;
 
 
-    // public  void main(String args[]) throws FileNotFoundException {
-//
-  //      simulateFromFile("./src/test/file.csv");
-    //}
+     public  void main(String args[]) throws FileNotFoundException {
+
+        simulateFromFile("./src/test/file.csv");
+    }
 
     
     public  void simulateFromFile(String filepath) throws FileNotFoundException {
 
+        SensorArray sa = new SensorArray();
 
         Scanner scanner = new Scanner(new File(filepath));
         
@@ -42,6 +46,13 @@ public class CleanSweep {
             boolean charging_station=  Boolean.parseBoolean(tokens[8]); //whether there is a charging station
 
          
+            // Because the sensor array is unaware of the floor type it is moving to, the battery reduction for traversal has to be done here
+            if (sa.surface_sensor != null) {
+                // Manage power for traversal: remove average of last surface and current surface
+                RemoveCharge((sa.surface_sensor.getUnits() + surface_sensor.getUnits())/2f);
+                System.out.println("Capacity after traversal = " + GetCharge());
+                System.out.println( );
+            }
 
             System.out.print(id + "- ");
             System.out.print(n_sensor.toString() + " | ");
@@ -105,65 +116,84 @@ public class CleanSweep {
     }
 
   
+    public static void traverse(SensorArray sa) {
+        System.out.println("Traversing...");
 
-    public  void traverse(SensorArray sa) {
-        System.out.println("Traversing..." + direction.toString());
+        /* 
+         This loop checks if the direction we last moved in is still open. If it is, continute in that direction.
+         If it's not open, change direction to the next in the order (E, S, W, N) and check there. Continue until open 
+         direction is found
+        */
+        for (int i = 0; i < 2; i++) {
+
+            boolean foundDirection = false;
+
+            // check if direction from previous traversal is open again
+            switch (direction) {
+                case EAST:
+                    if (sa.e_sensor.equals(PathOptionsEnum.OPEN)) {
+                        foundDirection = true;
+                    }
+                    break;
+                case SOUTH:
+                    if (sa.s_sensor.equals(PathOptionsEnum.OPEN)) {
+                        foundDirection = true;
+                    }
+                    break;
+                case WEST:
+                    if (sa.w_sensor.equals(PathOptionsEnum.OPEN)) {
+                        foundDirection = true;
+                    }
+                    break;
+                case NORTH:
+                    if (sa.n_sensor.equals(PathOptionsEnum.OPEN)) {
+                        foundDirection = true;
+                    }
+                    break;
+            
+                default:
+                    break;
+            }
+            if (foundDirection) {
+                break;
+            }
+
+            // if direction from previous traversal is blocked, change direction to next in order (E, S, W, N)
+            switch (direction) {
+                case EAST:
+                    direction = NavigationOptionsEnum.SOUTH;
+                    break;
+                case SOUTH:
+                    direction = NavigationOptionsEnum.WEST;
+                    break;
+                case WEST:
+                    direction = NavigationOptionsEnum.NORTH;
+                    break;
+                case NORTH:
+                    direction = NavigationOptionsEnum.EAST;
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
         switch (direction) {
             case EAST:
-                if (sa.e_sensor.equals(PathOptionsEnum.OPEN) /*&& !visited(row, col + new Integer(1)) */) 
-                {
-                    moveEast();
-
-                }
-                else
-                {  
-                    if (sa.s_sensor.equals(PathOptionsEnum.OPEN)) {
-                      //  CleanSweep.direction = NavigationOptionsEnum.SOUTH;
-                      direction = NavigationOptionsEnum.SOUTH;
-
-                        moveSouth();
-                    }
-
-                }   
+                moveEast();
                 break;
             case SOUTH:
-                if (sa.w_sensor.equals(PathOptionsEnum.OPEN)) {
-                    //CleanSweep.
-                    direction = NavigationOptionsEnum.WEST;
-                    moveWest();
-
-                } else 
-                {
-                    if (sa.e_sensor.equals(PathOptionsEnum.OPEN)) {
-                       // CleanSweep.
-                        direction = NavigationOptionsEnum.EAST;
-                        moveEast();
-                    } 
-                }
+                moveSouth();
                 break;
             case WEST:
-                if (sa.w_sensor.equals(PathOptionsEnum.OPEN) /* && !visited(row, col - new Integer(1))*/) 
-                {   
-                    moveWest();
-
-                } else {
-                    if (sa.s_sensor.equals(PathOptionsEnum.OPEN)) {
-                        //CleanSweep.
-                        direction = NavigationOptionsEnum.SOUTH;
-                        moveSouth();
-                    }
-                } 
+                moveWest();
                 break;
             case NORTH:
-                
+                moveNorth();
                 break;
-        
             default:
                 break;
         }
-      
-
-
     }
 
    /*  private  boolean visited(Integer i, Integer j) {
@@ -173,7 +203,13 @@ public class CleanSweep {
 
     public  void clean(SensorArray sa) {
         
+        System.out.println("Capacity before clean = " + GetCharge());
         System.out.println("Cleaning...");
+
+        // remove battery charge depending on current floor type
+        RemoveCharge(sa.surface_sensor.getUnits());
+
+        System.out.println("Capacity after clean = " + GetCharge());
     }
 
     public  void moveNorth() {
@@ -216,4 +252,17 @@ public class CleanSweep {
     public int getMaxJ() {
         return maxJ;
     }
+    
+    private static float GetCharge() {
+        return batteryCharge;
+    }
+
+    private static void RemoveCharge(float reductionAmount) {
+        batteryCharge -= reductionAmount;
+    }
+
+    private static void RemoveCapacity(int reductionAmount) {
+        dirtCapacity -= reductionAmount;
+    }
+
 }
