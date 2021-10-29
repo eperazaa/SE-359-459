@@ -18,7 +18,7 @@ public class Main {
         // This is where we connect the two and start
        
         CleanSweepSimulator simulator = new CleanSweepSimulator(maxCol, maxRow, path);
-        CleanSweepNode startingPoint = simulator.getExternalFloorPlan().GetNodeFromXY(0, 0);
+        CleanSweepNode startingPoint = simulator.getExternalFloorPlan().GetNodeFromXY(0, 9);
         //simulator.loadFloorPlan(maxCol, maxRow, path);
 
         CleanSweepRobot robot = new CleanSweepRobot(simulator);

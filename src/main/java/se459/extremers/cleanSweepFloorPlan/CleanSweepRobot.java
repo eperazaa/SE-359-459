@@ -67,9 +67,6 @@ public class CleanSweepRobot {
             // This would be used for many things: calculate return to home, calculate path to door, calcualte path to unvisted tiles in room
             
             this.VisitNode(node);
-            
-            // TODO: Check current power against power to closer charging station
-
 
 
             // When this is true, there is an unvisited node in one of the 4 directions around current node
@@ -118,7 +115,7 @@ public class CleanSweepRobot {
         this.direction = NavigationOptionsEnum.EAST;
 
         if (newPos != null) {
-            System.out.println("Started pathfinding to unvisted");
+            //System.out.println("Started pathfinding to unvisted");
             traverse(currentNode, newPos.node);
             return true;
         }
@@ -140,10 +137,10 @@ public class CleanSweepRobot {
         this.currentNode = node;
         
         node.visited = true;
-        System.out.println("Visited Node with ID: " + node.id);
+        //System.out.println("Visited Node with ID: " + node.id);
+        System.out.println("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
 
         this.cleanNode(node);
-       
     }
 
     private void cleanNode(CleanSweepNode node) {
@@ -151,13 +148,15 @@ public class CleanSweepRobot {
         
         while(!node.isClean) // this should be a call to the simulator
         {
-            if ( checkCapacity())
+            if (checkCapacity())
             {
                 if (checkPower(node.surface)) {
                     node.decreaseDirt(); // this should be a call to the simulator
 
                     this.decreasePower(node.surface.getUnits());
-                    this.decreaseCapcity(node.dirt);
+                    this.decreaseCapcity();
+
+                    
                 } else {
                     returnToChargingStation(ReturnReasons.POWER_DEFICIT);
                 }
@@ -167,11 +166,8 @@ public class CleanSweepRobot {
             }
 
         } 
-       System.out.println("Cleaned Node with ID: " + node.id);
-      // System.out.println("C," + node.id);
-
-
-
+        //System.out.println("Cleaned Node with ID: " + node.id);
+        System.out.println("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
     }
 
     private void toggleEmptyMeLed() {
@@ -179,7 +175,7 @@ public class CleanSweepRobot {
     }
 
     private void returnToChargingStation(ReturnReasons reason) {
-        System.out.println("returning to charging station for reason " + reason.toString());
+        //System.out.println("returning to charging station for reason " + reason.toString());
         tripsToStation++;
         CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.stations.getFirst();
         traverse(this.currentNode, lastVistedChargingStation);
@@ -190,7 +186,7 @@ public class CleanSweepRobot {
 
             resume(this.lastVisited);
         }
-        shutdown(reason);
+        //shutdown(reason);
     }
 
     private void shutdown(ReturnReasons reason) {
@@ -205,7 +201,7 @@ public class CleanSweepRobot {
     }
 
     private void traverse(CleanSweepNode fromNode, CleanSweepNode toNode) {
-        System.out.println("Traversing from " + fromNode.id + " to " + toNode.id); //no cleaning is performed but power should be managed for traversing
+        //System.out.println("Traversing from " + fromNode.id + " to " + toNode.id); //no cleaning is performed but power should be managed for traversing
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(fromNode, toNode);
 
             // Reverse list to get path from fromNode to toNode, then remove first entry since that is current node
@@ -215,7 +211,7 @@ public class CleanSweepRobot {
             CleanSweepNode prevNode = currentNode;
             for (CleanSweepNode steps : path) {
                 //System.out.println("Pathfinding... Visited node: " + steps.id);
-                //System.out.println("P," + steps.id);
+                System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
                 this.currentNode = steps;
                 this.position = new Point(this.position.getX() + (steps.pos.getX()-this.position.getX()), this.position.getY()+(steps.pos.getY()-this.position.getY()));
                 float movePowerComsumption = calculateMovingPowerComsumption(prevNode, currentNode);
@@ -238,8 +234,8 @@ public class CleanSweepRobot {
         this.batteryCharge = this.batteryCharge - units;
     }
 
-    private void decreaseCapcity(int dirt) {
-        this.dirtCapacity = this.dirtCapacity - dirt;
+    private void decreaseCapcity() {
+        this.dirtCapacity--;
     }
 
     private boolean checkCapacity() {
@@ -254,11 +250,23 @@ public class CleanSweepRobot {
         if (this.batteryCharge - powerToReturn - powerToBeUsed > 0)
             checkResult = true;
         
-            return checkResult;
+        return checkResult;
     }
 
     private int calculatePowerToReturn() {
-        return 0;
+        CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.stations.getFirst();
+        List<CleanSweepNode> path = this.internalFloorPlan.aStar(this.currentNode, lastVistedChargingStation);
+
+
+        int totalCost = 0;
+        CleanSweepNode holder = path.get(0);
+        for (int i = 1; i < path.size(); i++) {
+            CleanSweepNode curr = path.get(i);
+            totalCost += (holder.surface.getUnits()+curr.surface.getUnits())/2;
+            holder = curr;
+        }
+
+        return totalCost;
     }
 
     public boolean DecideNextDirection() {
