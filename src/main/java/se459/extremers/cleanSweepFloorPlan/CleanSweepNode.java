@@ -88,22 +88,30 @@ public class CleanSweepNode  {
 
 	public void AssignNorthInternal(CleanSweepNode node) {
 		this.northNode = node;
-		this.neighbors.add(node);
+		if (this.northEdge == edgeType.OPEN) {
+			this.neighbors.add(node);
+		}
 	}
 
 	public void AssignEastInternal(CleanSweepNode node) {
 		this.eastNode = node;
-		this.neighbors.add(node);
+		if (this.eastEdge == edgeType.OPEN) {
+			this.neighbors.add(node);
+		}
 	}
 
 	public void AssignSouthInternal(CleanSweepNode node) {
 		this.southNode = node;
-		this.neighbors.add(node);
+		if (this.southEdge == edgeType.OPEN) {
+			this.neighbors.add(node);
+		}
 	}
 
 	public void AssignWestInternal(CleanSweepNode node) {
 		this.westNode = node;
-		this.neighbors.add(node);
+		if (this.westEdge == edgeType.OPEN) {
+			this.neighbors.add(node);
+		}
 	}
 }
 

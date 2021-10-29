@@ -167,7 +167,9 @@ public class CleanSweepRobot {
             }
 
         } 
-       //System.out.println("Cleaned Node with ID: " + node.id);
+       System.out.println("Cleaned Node with ID: " + node.id);
+      // System.out.println("C," + node.id);
+
 
 
     }
@@ -212,7 +214,8 @@ public class CleanSweepRobot {
 
             CleanSweepNode prevNode = currentNode;
             for (CleanSweepNode steps : path) {
-                System.out.println("Pathfinding... Visited node: " + steps.id);
+                //System.out.println("Pathfinding... Visited node: " + steps.id);
+                //System.out.println("P," + steps.id);
                 this.currentNode = steps;
                 this.position = new Point(this.position.getX() + (steps.pos.getX()-this.position.getX()), this.position.getY()+(steps.pos.getY()-this.position.getY()));
                 float movePowerComsumption = calculateMovingPowerComsumption(prevNode, currentNode);
