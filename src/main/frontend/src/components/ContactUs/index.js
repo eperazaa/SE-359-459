@@ -2,19 +2,21 @@ import { useHistory } from "react-router-dom";
 
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-function RegisterDevice() {
+function ContactUs() {
     let history = useHistory();
 
     function handleClick() {
-        history.push("/contact-us");
+        history.push("/register-device");
     }
 
-    function handleRegister() {
-        history.push("/register-device");
+    function handleSubmit() {
+        history.push("/dashboard");
     }
 
     return (
@@ -31,18 +33,22 @@ function RegisterDevice() {
                     <Col xs={12} md={6}>
                         <Form style={{textAlign:"left", background:"#5865F2", borderRadius:"20px", padding:80}}>
                             <h2 class="pb-4" style={{textAlign:"center", color:"#F6F6F6"}}>
-                                Register Your Device
+                                Contact Us
                             </h2>
                             <Form.Group className="my-4" controlId="formBasicEmail">
-                                <Form.Label>Device ID</Form.Label>
-                                <Form.Control type="email" placeholder="Enter your device id" />
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control type="email" placeholder="Enter email" />
+                            </Form.Group>
+                            <Form.Group className="my-4" controlId="message">
+                                <Form.Label>Brief Message</Form.Label>
+                                <Form.Control as="textarea" rows={3} placeholder="Tell us what's going on"/>
                             </Form.Group>
                             <div className="d-grid gap-2">
-                                <Button variant="outline-dark" className="mt-4" onClick={handleRegister}>
-                                    Register
+                                <Button variant="outline-dark" className="mt-4" onClick={handleSubmit}>
+                                    Submit
                                 </Button>
                                 <Button variant="link" style={{color:"#F6F6F6"}} onClick={handleClick}>
-                                    Issue with your device? Contact us here!
+                                    Return to Device Registration
                                 </Button>
                             </div>
                         </Form>
@@ -55,4 +61,5 @@ function RegisterDevice() {
 }
 
 
-export default RegisterDevice;
+
+export default ContactUs;

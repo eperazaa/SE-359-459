@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import CreateAccount from './components/CreateAccount';
 import SignIn from './components/SignIn';
 import RegisterDevice from './components/RegisterDevice';
+import ContactUs from './components/ContactUs';
 
 function App() {
     return (
@@ -27,6 +28,9 @@ function App() {
             </Route>
             <Route path="/register-device">
                 <RegisterDevice />
+            </Route>
+            <Route path="/contact-us">
+                <ContactUs />
             </Route>
           </Switch>
       </Router>
