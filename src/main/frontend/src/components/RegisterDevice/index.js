@@ -16,7 +16,7 @@ function RegisterDevice() {
     }
 
     function handleRegister() {
-        history.push("/register-device");
+        history.push("/dashboard");
     }
 
     return (

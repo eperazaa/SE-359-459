@@ -13,6 +13,7 @@ import CreateAccount from './components/CreateAccount';
 import SignIn from './components/SignIn';
 import RegisterDevice from './components/RegisterDevice';
 import ContactUs from './components/ContactUs';
+import Dashboard from './components/Dashboard';
 
 function App() {
     return (
@@ -31,6 +32,9 @@ function App() {
             </Route>
             <Route path="/contact-us">
                 <ContactUs />
+            </Route>
+            <Route path="/dashboard">
+                <Dashboard />
             </Route>
           </Switch>
       </Router>
