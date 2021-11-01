@@ -1,3 +1,5 @@
+import { useHistory } from "react-router-dom";
+
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
@@ -5,6 +7,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 function SignIn() {
+    let history = useHistory();
+
+    function handleClick() {
+        history.push("/create-account");
+    }
+
+    function handleSubmit() {
+        history.push("/register-device");
+    }
+
     return (
         <div>
             <Container 
@@ -30,10 +42,10 @@ function SignIn() {
                                 <Form.Control type="password" placeholder="Enter Password" />
                             </Form.Group>
                             <div className="d-grid gap-2">
-                                <Button variant="outline-dark" className="mt-4" onClick={() => window.location.href = "/register-device"}>
+                                <Button variant="outline-dark" className="mt-4" onClick={handleSubmit}>
                                     Submit
                                 </Button>
-                                <Button variant="link" style={{color:"#F6F6F6"}} onClick={() => window.location.href = "/create-account"}>
+                                <Button variant="link" style={{color:"#F6F6F6"}} onClick={handleClick}>
                                     Don't have an account? Click to sign up here!
                                 </Button>
                             </div>

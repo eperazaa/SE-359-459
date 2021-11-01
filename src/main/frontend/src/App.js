@@ -1,20 +1,35 @@
-import logo from './logo.svg';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-
 import CreateAccount from './components/CreateAccount';
+import SignIn from './components/SignIn';
+import RegisterDevice from './components/RegisterDevice';
 
 function App() {
     return (
-        <div className="App">
-            <div>
+        <Router>  
+          {/* A <Switch> looks through its children <Route>s and
+              renders the first one that matches the current URL. */}
+          <Switch>
+            <Route path="/create-account" exact>
                 <CreateAccount />
-            </div>
-        </div>
+            </Route>
+            <Route path="/sign-in">
+              <SignIn />
+            </Route>
+            <Route path="/register-device">
+                <RegisterDevice />
+            </Route>
+          </Switch>
+      </Router>
     );
 }
 

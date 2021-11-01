@@ -1,3 +1,5 @@
+import { useHistory } from "react-router-dom";
+
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
@@ -7,6 +9,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 function CreateAccount() {
+    let history = useHistory();
+
+    function handleClick() {
+        history.push("/sign-in");
+    }
+
+    function handleSubmit() {
+        history.push("/register-device");
+    }
+
     return (
         <div>
             <Container 
@@ -27,15 +39,19 @@ function CreateAccount() {
                                 <Form.Label>Email address</Form.Label>
                                 <Form.Control type="email" placeholder="Enter email" />
                             </Form.Group>
+                            <Form.Group className="my-4" controlId="formBasicEmail">
+                                <Form.Label>Confirm email</Form.Label>
+                                <Form.Control type="email" placeholder="Enter email address again" />
+                            </Form.Group>
                             <Form.Group className="my-4" controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type="password" placeholder="Enter Password" />
                             </Form.Group>
                             <div className="d-grid gap-2">
-                                <Button variant="outline-dark" className="mt-4" onClick={() => window.location.href = "/register-device"}>
+                                <Button variant="outline-dark" className="mt-4" onClick={handleSubmit}>
                                     Submit
                                 </Button>
-                                <Button variant="link" style={{color:"#F6F6F6"}} onClick={() => window.location.href = "/sign-in"}>
+                                <Button variant="link" style={{color:"#F6F6F6"}} onClick={handleClick}>
                                     Already have an account? Click to sign in here!
                                 </Button>
                             </div>
