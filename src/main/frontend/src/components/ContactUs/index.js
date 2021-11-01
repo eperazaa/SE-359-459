@@ -8,6 +8,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import LogOutButton from "../LogOutButton";
+
 function ContactUs() {
     let history = useHistory();
 
@@ -24,11 +26,20 @@ function ContactUs() {
             <Container 
                 fluid
                 style={{
+                    minHeight:"100vh",
                     background:"#282c34",
                     color: "#F6F6F6",
                     fontSize:"calc(10px + 1.5vmin)",
                 }}>
-                <Row style={{minHeight:"100vh", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+                <Row className="pt-2">
+                    <Col xs={2} md={2}/>
+                    <Col xs={8} md={8}>
+                    </Col>
+                    <Col xs={2} md={2}>
+                        <LogOutButton />
+                    </Col>
+                </Row>
+                <Row style={{minHeight:"90vh", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
                     <Col xs={0} md={3}/>
                     <Col xs={12} md={6}>
                         <Form style={{textAlign:"left", background:"#5865F2", borderRadius:"20px", padding:80}}>
