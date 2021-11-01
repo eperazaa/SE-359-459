@@ -1,11 +1,7 @@
 package se459.extremers.logger;
-
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
-import java.util.List;
+
 
 /**
  * For Pagination and Other JPA functionality beyond base CRUD services
