@@ -177,7 +177,7 @@ public class CleanSweepRobot {
     private void returnToChargingStation(ReturnReasons reason) {
         //System.out.println("returning to charging station for reason " + reason.toString());
         tripsToStation++;
-        CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.stations.getFirst();
+        CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.FindClosestStation(this.currentNode);
         traverse(this.currentNode, lastVistedChargingStation);
         recharge();
         if (!(reason.equals(ReturnReasons.DEVICE_LOCKED) || reason.equals(ReturnReasons.HOUSE_CLEANED))){
@@ -254,7 +254,7 @@ public class CleanSweepRobot {
     }
 
     private int calculatePowerToReturn() {
-        CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.stations.getFirst();
+        CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.FindClosestStation(this.currentNode);
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(this.currentNode, lastVistedChargingStation);
 
 
