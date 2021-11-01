@@ -9,16 +9,16 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException{
     
         // This is the external map of the house that the robot is not aware of
-        int maxCol = 10;
-        int maxRow = 10;
+        int maxCol = 16;
+        int maxRow = 22;
         //FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/file copy.csv");
-        String path = "./src/test/extTree_SampleFloorPlan.csv";
+        String path = "./src/test/extTree_SampleFloorMap_v2.csv";
         //PrintFloorPlan(externalFloorPlan);
         
         // This is where we connect the two and start
        
         CleanSweepSimulator simulator = new CleanSweepSimulator(maxCol, maxRow, path);
-        CleanSweepNode startingPoint = simulator.getExternalFloorPlan().GetNodeFromXY(0, 9);
+        CleanSweepNode startingPoint = simulator.getExternalFloorPlan().GetNodeFromXY(15, 8);
         //simulator.loadFloorPlan(maxCol, maxRow, path);
 
         CleanSweepRobot robot = new CleanSweepRobot(simulator);

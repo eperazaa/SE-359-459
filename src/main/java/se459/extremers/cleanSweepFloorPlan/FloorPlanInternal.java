@@ -182,6 +182,10 @@ public class FloorPlanInternal {
         return new Point(pos.getX() - 1, pos.getY());
     }
 
+    //public CleanSweepNode FindNearestStation(CleanSweepNode node) {
+        //List<CleanSweepNode>[] tmpArray = new 
+   // }
+
     // code base from
     // https://stackoverflow.com/questions/5601889/unable-to-implement-a-star-in-java
     public List<CleanSweepNode> aStar(CleanSweepNode start, CleanSweepNode goal) {

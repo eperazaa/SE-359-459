@@ -5,6 +5,8 @@ import se459.extremers.simulator.CleanSweepSimulator;
 
 import org.springframework.data.geo.Point;
 import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class CleanSweepRobot {
     
@@ -22,7 +24,8 @@ public class CleanSweepRobot {
 
     // stats for testing
     int tripsToStation;    
-    
+    FileWriter myWriter;
+
 
     public CleanSweepRobot(CleanSweepSimulator css) {
         this.batteryCharge = Constants.MAX_POWER_CHARGE; 
@@ -35,6 +38,22 @@ public class CleanSweepRobot {
         this.myCSS = css;
         
         this.tripsToStation = 0;
+        try {
+            myWriter = new FileWriter("filename.txt");
+            System.out.println("Successfully wrote to the file.");
+          } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+          }
+    }
+
+    private void writeStuff(String tmp) {
+        try {
+            myWriter.write(tmp + '\n');
+          } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+          }
     }
 
     public void cleanHouse(CleanSweepNode node) {
@@ -101,6 +120,17 @@ public class CleanSweepRobot {
         System.out.println("Ending capacity ammount = " + this.dirtCapacity);
         System.out.println("Total trips back to station = " + this.tripsToStation);
 
+        try{
+            myWriter.close();
+        }
+        catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+            
+        
+        
+
         //TODO: Change this. Without this line, execution continues past end... investigate
         System.exit(0);
     }
@@ -138,7 +168,8 @@ public class CleanSweepRobot {
         
         node.visited = true;
         //System.out.println("Visited Node with ID: " + node.id);
-        System.out.println("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        //System.out.println("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        writeStuff("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
 
         this.cleanNode(node);
     }
@@ -167,7 +198,9 @@ public class CleanSweepRobot {
 
         } 
         //System.out.println("Cleaned Node with ID: " + node.id);
-        System.out.println("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        //System.out.println("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+
+        writeStuff("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
     }
 
     private void toggleEmptyMeLed() {
@@ -211,7 +244,8 @@ public class CleanSweepRobot {
             CleanSweepNode prevNode = currentNode;
             for (CleanSweepNode steps : path) {
                 //System.out.println("Pathfinding... Visited node: " + steps.id);
-                System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+                //System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+                writeStuff("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
                 this.currentNode = steps;
                 this.position = new Point(this.position.getX() + (steps.pos.getX()-this.position.getX()), this.position.getY()+(steps.pos.getY()-this.position.getY()));
                 float movePowerComsumption = calculateMovingPowerComsumption(prevNode, currentNode);
@@ -255,6 +289,7 @@ public class CleanSweepRobot {
 
     private int calculatePowerToReturn() {
         CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.stations.getFirst();
+        //System.out.println("From curr: " + this.currentNode.id + " to lastVistedStation: " + lastVistedChargingStation.id);
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(this.currentNode, lastVistedChargingStation);
 
 
