@@ -182,9 +182,15 @@ public class FloorPlanInternal {
         return new Point(pos.getX() - 1, pos.getY());
     }
 
-    //public CleanSweepNode FindNearestStation(CleanSweepNode node) {
-        //List<CleanSweepNode>[] tmpArray = new 
-   // }
+    public CleanSweepNode FindClosestStation(CleanSweepNode start) {
+        TreeMap<Integer, CleanSweepNode> paths = new TreeMap<Integer, CleanSweepNode>();
+
+        for (CleanSweepNode station : this.stations) {
+            int size = aStar(start, station).size();
+            paths.put(size, station);
+        }
+        return paths.get(paths.firstKey());
+    }
 
     // code base from
     // https://stackoverflow.com/questions/5601889/unable-to-implement-a-star-in-java
