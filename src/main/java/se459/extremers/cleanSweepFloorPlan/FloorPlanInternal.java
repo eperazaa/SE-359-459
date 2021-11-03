@@ -190,11 +190,6 @@ public class FloorPlanInternal {
             paths.put(size, station);
         }
 
-
-        if (true) {
-            boolean bool = true;
-        }
-
         return paths.get(paths.firstKey());
     }
 

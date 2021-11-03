@@ -297,6 +297,10 @@ public class CleanSweepRobot {
         return  surface.getUnits();
     }
 
+    private int calculatePowerToReturn() {
+        CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.FindClosestStation(this.currentNode);
+        List<CleanSweepNode> path = this.internalFloorPlan.aStar(this.currentNode, lastVistedChargingStation);
+
 
     private float calculatePowerToReturn() {
 
