@@ -246,7 +246,7 @@ public class CleanSweepRobot {
 
     private void traverse(CleanSweepNode fromNode, CleanSweepNode toNode) {
         //System.out.println("Traversing from " + fromNode.id + " to " + toNode.id);
-       writeStuff("Traversing from " + fromNode.id + " to " + toNode.id);
+       //writeStuff("Traversing from " + fromNode.id + " to " + toNode.id);
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(fromNode, toNode);
 
             // Reverse list to get path from fromNode to toNode, then remove first entry since that is current node
@@ -304,6 +304,7 @@ public class CleanSweepRobot {
 
         CleanSweepNode closestChargingStation = this.internalFloorPlan.FindClosestStation(this.currentNode);
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(this.currentNode, closestChargingStation);
+        Collections.reverse(path);
 
         // add current node to top of path
         path.add(0, this.currentNode);
