@@ -189,6 +189,12 @@ public class FloorPlanInternal {
             int size = aStar(start, station).size();
             paths.put(size, station);
         }
+
+
+        if (true) {
+            boolean bool = true;
+        }
+
         return paths.get(paths.firstKey());
     }
 
@@ -229,7 +235,7 @@ public class FloorPlanInternal {
                     continue;
                 }
 
-                int nextG = current.g + neighbor.cost;
+                 int nextG = current.g + neighbor.cost;
 
                 if (nextG < neighbor.g) {
                     open.remove(neighbor);
@@ -254,28 +260,28 @@ public class FloorPlanInternal {
         }
         nodes.add(start);
 
-        ResetNodeValues(start, goal);
+        ResetNodeValues(nodes, start, goal);
 
         return nodes;
     }
 
-    private void ResetNodeValues(CleanSweepNode start, CleanSweepNode goal) {
+    private void ResetNodeValues(List<CleanSweepNode> nodes, CleanSweepNode start, CleanSweepNode goal) {
 
         start.parent = goal.parent = null;
         start.f = goal.f = 0;
         start.g = goal.g = 0;
         start.h = goal.h = 0;
-        start.cost = goal.cost = 0;
 
+        for (CleanSweepNode node: nodes) {
+            node.parent = null;
+            node.f  = 0;
+            node.g = 0;
+            node.h  = 0;
+        }
     }
 
     public int estimateDistance(CleanSweepNode node1, CleanSweepNode node2) {
-        double tmp;
-        try {
-            tmp = Math.abs(node1.pos.getX() - node2.pos.getX()) + Math.abs(node1.pos.getY() - node2.pos.getY());
-        } catch (NullPointerException e) {
-            tmp = Integer.MAX_VALUE;
-        }
+        double tmp = Math.abs(node1.pos.getX() - node2.pos.getX()) + Math.abs(node1.pos.getY() - node2.pos.getY());
 
         return (int) tmp;
     }

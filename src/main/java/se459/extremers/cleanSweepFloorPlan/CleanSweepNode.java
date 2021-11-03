@@ -47,6 +47,8 @@ public class CleanSweepNode  {
 
 		this.neighbors = new ArrayList<CleanSweepNode>();
 
+		this.cost = this.surface.getUnits();
+
 		this.isChargingStation = chargingStation;
 		this.dirt = dirt_level;
 	}
@@ -64,6 +66,8 @@ public class CleanSweepNode  {
 		this.neighbors = new ArrayList<CleanSweepNode>();
 
 		this.pos = position;
+
+		this.cost = this.surface.getUnits();
 
 		this.isChargingStation = node.isChargingStation;
 		this.dirt = node.dirt;
