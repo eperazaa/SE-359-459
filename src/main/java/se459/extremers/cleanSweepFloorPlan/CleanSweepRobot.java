@@ -257,7 +257,7 @@ public class CleanSweepRobot {
             for (CleanSweepNode steps : path) {
 
                 //System.out.println("Pathfinding... Visited node: " + steps.id);
-                //System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+               // System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
 
                 writeStuff("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
 
