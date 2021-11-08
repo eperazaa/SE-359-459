@@ -20,7 +20,7 @@ const AdminChart = (props) => {
                 labels: ['1', '2', '3', '4', '5', '6'],
                 datasets: [
                     {
-                        label: '# of Votes',
+                        label: 'Floor Items',
                         data: [12, 19, 3, 5, 2, 3],
                         fill: false,
                         backgroundColor: 'rgb(255, 99, 132)',
@@ -42,7 +42,7 @@ const AdminChart = (props) => {
                 labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                 datasets: [
                     {
-                        label: '# of Votes',
+                        label: '# of Stations',
                         data: [12, 19, 3, 5, 2, 3],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
@@ -77,13 +77,13 @@ const AdminChart = (props) => {
             };
             chartHandler.push(<Bar data={data} options={options} />)
             break;
-        case "path":
+        case "dirt":
             data = {
                 labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                 datasets: [
                     {
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3],
+                        label: 'Floor Type',
+                        data: [12, 19, 3, 3, 2, 6],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -126,13 +126,13 @@ const AdminChart = (props) => {
             };
             chartHandler.push(<Bar data={data} options={options} />)
             break;
-        case "dirt":
+        case "path":
             chartMaxWidth = "600px"
             data = {
                 labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                 datasets: [
                     {
-                        label: '# of Votes',
+                        label: 'Types of Obstacles',
                         data: [12, 19, 3, 5, 2, 3],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
@@ -161,7 +161,7 @@ const AdminChart = (props) => {
     return (
     <>
         <div className='header'>
-            <h1 className='title'>{props.title}</h1>
+            <h3 className='title'>{props.title}</h3>
             <Row className='links my-4'>
                 <Col className='d-flex justify-content-around'>
                     <Button className="w-50 btn-light mx-2" onClick={() => setChartType("floor")}>
