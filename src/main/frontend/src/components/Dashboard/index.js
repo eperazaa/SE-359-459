@@ -3,6 +3,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import LogOutButton from "../LogOutButton";
+import AdminChart from "../AdminChart";
 
 function Dashboard() {
     return (
@@ -23,9 +24,20 @@ function Dashboard() {
                         <LogOutButton />
                     </Col>
                 </Row>
-                <h1>CleanSweep Portal</h1>
-                <br />
-                <h3>Welcome User</h3>
+                <Row className="pt-2 mb-4">
+                    <Col xs={8}>
+                        <h1>CleanSweep Portal</h1>
+                        <h3>Welcome User</h3>
+                    </Col>
+                    <Col xs={8} md={8}>
+                    </Col>
+                    <Col xs={2} md={2}/>
+                </Row>
+                <Row style={{minHeight:"300px", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+                    <Col xl={10} xxl={8}>
+                        <AdminChart title={"Admin Metrics"}/>
+                    </Col>
+                </Row>
             </Container>
         </div>
     )
