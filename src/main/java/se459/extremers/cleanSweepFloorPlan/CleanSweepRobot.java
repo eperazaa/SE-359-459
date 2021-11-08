@@ -5,6 +5,8 @@ import se459.extremers.simulator.CleanSweepSimulator;
 
 import org.springframework.data.geo.Point;
 import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class CleanSweepRobot {
     
@@ -22,7 +24,8 @@ public class CleanSweepRobot {
 
     // stats for testing
     int tripsToStation;    
-    
+    FileWriter myWriter;
+
 
     public CleanSweepRobot(CleanSweepSimulator css) {
         this.batteryCharge = Constants.MAX_POWER_CHARGE; 
@@ -35,6 +38,22 @@ public class CleanSweepRobot {
         this.myCSS = css;
         
         this.tripsToStation = 0;
+        try {
+            myWriter = new FileWriter("filename.txt");
+            System.out.println("Successfully wrote to the file.");
+          } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+          }
+    }
+
+    private void writeStuff(String tmp) {
+        try {
+            myWriter.write(tmp + '\n');
+          } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+          }
     }
 
     public void cleanHouse(CleanSweepNode node) {
@@ -101,6 +120,17 @@ public class CleanSweepRobot {
         System.out.println("Ending capacity ammount = " + this.dirtCapacity);
         System.out.println("Total trips back to station = " + this.tripsToStation);
 
+        try{
+            myWriter.close();
+        }
+        catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+            
+        
+        
+
         //TODO: Change this. Without this line, execution continues past end... investigate
         System.exit(0);
     }
@@ -138,36 +168,52 @@ public class CleanSweepRobot {
         
         node.visited = true;
         //System.out.println("Visited Node with ID: " + node.id);
-        System.out.println("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        //System.out.println("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        writeStuff("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
 
         this.cleanNode(node);
+
+
     }
 
     private void cleanNode(CleanSweepNode node) {
         this.lastVisited = node;
         
+        float powerToReturn = calculatePowerToReturn();
+        float powerToClean = checkSurfacePower(node.surface);
         while(!node.isClean) // this should be a call to the simulator
         {
             if (checkCapacity())
             {
-                if (checkPower(node.surface)) {
+                if (this.batteryCharge - (powerToReturn + powerToClean) > 0){
+
                     node.decreaseDirt(); // this should be a call to the simulator
-
-                    this.decreasePower(node.surface.getUnits());
+    
+                    this.decreasePower(powerToClean);
                     this.decreaseCapcity();
-
-                    
-                } else {
+                }
+                else {
                     returnToChargingStation(ReturnReasons.POWER_DEFICIT);
+                    continue;
                 }
             } else {
                 toggleEmptyMeLed();
                 returnToChargingStation(ReturnReasons.CAPACITY_DEFICIT);
+                continue;
             }
 
         } 
         //System.out.println("Cleaned Node with ID: " + node.id);
-        System.out.println("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        //System.out.println("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        writeStuff("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+
+
+        // After we finish cleaning check if we have the power to traverse the highest cost surface AND return home
+        if (this.batteryCharge - (powerToReturn + 3) <= 0) { 
+            // if not, return home
+            returnToChargingStation(ReturnReasons.POWER_DEFICIT);
+        }
+
     }
 
     private void toggleEmptyMeLed() {
@@ -195,26 +241,31 @@ public class CleanSweepRobot {
 
     private void resume(CleanSweepNode lastVisitedNode) {
         traverse(this.currentNode, lastVisitedNode);
-        cleanHouse(lastVisitedNode);
-
-
+        //cleanHouse(lastVisitedNode);
     }
 
     private void traverse(CleanSweepNode fromNode, CleanSweepNode toNode) {
-        //System.out.println("Traversing from " + fromNode.id + " to " + toNode.id); //no cleaning is performed but power should be managed for traversing
+        //System.out.println("Traversing from " + fromNode.id + " to " + toNode.id);
+       //writeStuff("Traversing from " + fromNode.id + " to " + toNode.id);
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(fromNode, toNode);
 
             // Reverse list to get path from fromNode to toNode, then remove first entry since that is current node
             Collections.reverse(path);
             path.remove(0);
 
-            CleanSweepNode prevNode = currentNode;
+
             for (CleanSweepNode steps : path) {
+
                 //System.out.println("Pathfinding... Visited node: " + steps.id);
-                System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+               // System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+
+                writeStuff("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+
+                CleanSweepNode prevNode = this.currentNode;
                 this.currentNode = steps;
+
                 this.position = new Point(this.position.getX() + (steps.pos.getX()-this.position.getX()), this.position.getY()+(steps.pos.getY()-this.position.getY()));
-                float movePowerComsumption = calculateMovingPowerComsumption(prevNode, currentNode);
+                float movePowerComsumption = calculateMovingPowerComsumption(prevNode,  this.currentNode);
                 decreasePower(movePowerComsumption);
             }
 
@@ -242,27 +293,27 @@ public class CleanSweepRobot {
         return (this.dirtCapacity > 0);
     }
 
-    private boolean checkPower(surfaceType surface) {
-        boolean checkResult = false;
-        int powerToReturn = calculatePowerToReturn();
-        int powerToBeUsed = surface.getUnits();
-        
-        if (this.batteryCharge - powerToReturn - powerToBeUsed > 0)
-            checkResult = true;
-        
-        return checkResult;
+    private float checkSurfacePower(surfaceType surface) {
+        return  surface.getUnits();
     }
+    
+    
+    private float calculatePowerToReturn() {
 
-    private int calculatePowerToReturn() {
-        CleanSweepNode lastVistedChargingStation = this.internalFloorPlan.FindClosestStation(this.currentNode);
-        List<CleanSweepNode> path = this.internalFloorPlan.aStar(this.currentNode, lastVistedChargingStation);
+        //System.out.println("From curr: " + this.currentNode.id + " to lastVistedStation: " + lastVistedChargingStation.id);
 
+        CleanSweepNode closestChargingStation = this.internalFloorPlan.FindClosestStation(this.currentNode);
+        List<CleanSweepNode> path = this.internalFloorPlan.aStar(this.currentNode, closestChargingStation);
+        Collections.reverse(path);
 
-        int totalCost = 0;
+        // add current node to top of path
+        path.add(0, this.currentNode);
+
+        float totalCost = 0;
         CleanSweepNode holder = path.get(0);
         for (int i = 1; i < path.size(); i++) {
             CleanSweepNode curr = path.get(i);
-            totalCost += (holder.surface.getUnits()+curr.surface.getUnits())/2;
+            totalCost += calculateMovingPowerComsumption(holder, curr);
             holder = curr;
         }
 
