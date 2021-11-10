@@ -43,22 +43,22 @@ class CleanSweepTest {
 
     }
 
-    @DisplayName("Checking simulateFromFile() ")
-    @Test
-    void simulateFromFile() throws FileNotFoundException {
-            CleanSweep cleanSweep = Mockito.spy(new CleanSweep());
-            cleanSweep.simulateFromFile("./src/test/fileTest.csv");
-            Mockito.verify(cleanSweep, Mockito.times(1)).clean(Mockito.any());
-            Mockito.verify(cleanSweep, Mockito.times(1)).traverse(Mockito.any());
-            Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
-            Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
-            Mockito.verify(cleanSweep, Mockito.times(0)).moveWest();
-            Mockito.verify(cleanSweep, Mockito.times(0)).setMaxRow();
-            Mockito.verify(cleanSweep, Mockito.times(0)).moveSouth();
-            Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
-            assertEquals(2,cleanSweep.getMaxJ());
-            assertEquals(1,cleanSweep.getMaxI());
-    }
+    // @DisplayName("Checking simulateFromFile() ")
+    // @Test
+    // void simulateFromFile() throws FileNotFoundException {
+    //         CleanSweep cleanSweep = Mockito.spy(new CleanSweep());
+    //         cleanSweep.simulateFromFile("./src/test/fileTest.csv");
+    //         Mockito.verify(cleanSweep, Mockito.times(1)).clean(Mockito.any());
+    //         Mockito.verify(cleanSweep, Mockito.times(1)).traverse(Mockito.any());
+    //         Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
+    //         Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
+    //         Mockito.verify(cleanSweep, Mockito.times(0)).moveWest();
+    //         Mockito.verify(cleanSweep, Mockito.times(0)).setMaxRow();
+    //         Mockito.verify(cleanSweep, Mockito.times(0)).moveSouth();
+    //         Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
+    //         assertEquals(2,cleanSweep.getMaxJ());
+    //         assertEquals(1,cleanSweep.getMaxI());
+    // }
 
     @DisplayName("Checking calls of printFloorPlan()")
     @Test
@@ -79,79 +79,79 @@ class CleanSweepTest {
 
     }
 
-    @DisplayName("Checking all cases for traversal")
-    @Test
-    void traversTest() throws FileNotFoundException
-    {
+    // @DisplayName("Checking all cases for traversal")
+    // @Test
+    // void traversTest() throws FileNotFoundException
+    // {
 
-        CleanSweep cleanSweep = Mockito.spy(new CleanSweep());
-        cleanSweep.traverse(saTest);
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
-        Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
-        Mockito.verify(cleanSweep, Mockito.times(0)).moveWest();
-        Mockito.verify(cleanSweep, Mockito.times(0)).setMaxRow();
-        Mockito.verify(cleanSweep, Mockito.times(0)).moveSouth();
-        Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
-        assertEquals(1,cleanSweep.getMaxJ());
-        assertEquals(0,cleanSweep.getMaxI());
+    //     CleanSweep cleanSweep = Mockito.spy(new CleanSweep());
+    //     cleanSweep.traverse(saTest);
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).moveWest();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).setMaxRow();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).moveSouth();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
+    //     assertEquals(1,cleanSweep.getMaxJ());
+    //     assertEquals(0,cleanSweep.getMaxI());
 
-        saTest = new SensorArray(PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,false,true,SurfaceEnum.BARE_FLOOR,false);
-        cleanSweep.traverse(saTest);
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
-        Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
-        Mockito.verify(cleanSweep, Mockito.times(0)).moveWest();
-        Mockito.verify(cleanSweep, Mockito.times(1)).setMaxRow();
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveSouth();
-        Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
-        assertEquals(1,cleanSweep.getMaxJ());
-        assertEquals(1,cleanSweep.getMaxI());
+    //     saTest = new SensorArray(PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,false,true,SurfaceEnum.BARE_FLOOR,false);
+    //     cleanSweep.traverse(saTest);
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).moveWest();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).setMaxRow();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveSouth();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
+    //     assertEquals(1,cleanSweep.getMaxJ());
+    //     assertEquals(1,cleanSweep.getMaxI());
 
 
-        saTest = new SensorArray(PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,PathOptionsEnum.OPEN,PathOptionsEnum.OPEN,false,true,SurfaceEnum.BARE_FLOOR,false);
-        cleanSweep.traverse(saTest);
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
-        Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveWest();
-        Mockito.verify(cleanSweep, Mockito.times(1)).setMaxRow();
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveSouth();
-        Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
-        assertEquals(1,cleanSweep.getMaxJ());
-        assertEquals(1,cleanSweep.getMaxI());
+    //     saTest = new SensorArray(PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,PathOptionsEnum.OPEN,PathOptionsEnum.OPEN,false,true,SurfaceEnum.BARE_FLOOR,false);
+    //     cleanSweep.traverse(saTest);
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveWest();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).setMaxRow();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveSouth();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
+    //     assertEquals(1,cleanSweep.getMaxJ());
+    //     assertEquals(1,cleanSweep.getMaxI());
 
-        saTest = new SensorArray(PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,PathOptionsEnum.OPEN,PathOptionsEnum.OBSTACLE,false,true,SurfaceEnum.BARE_FLOOR,false);
-        cleanSweep.traverse(saTest);
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
-        Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveWest();
-        Mockito.verify(cleanSweep, Mockito.times(2)).setMaxRow();
-        Mockito.verify(cleanSweep, Mockito.times(2)).moveSouth();
-        Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
-        assertEquals(1,cleanSweep.getMaxJ());
-        assertEquals(2,cleanSweep.getMaxI());
+    //     saTest = new SensorArray(PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,PathOptionsEnum.OPEN,PathOptionsEnum.OBSTACLE,false,true,SurfaceEnum.BARE_FLOOR,false);
+    //     cleanSweep.traverse(saTest);
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveWest();
+    //     Mockito.verify(cleanSweep, Mockito.times(2)).setMaxRow();
+    //     Mockito.verify(cleanSweep, Mockito.times(2)).moveSouth();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
+    //     assertEquals(1,cleanSweep.getMaxJ());
+    //     assertEquals(2,cleanSweep.getMaxI());
 
-        saTest = new SensorArray(PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,PathOptionsEnum.OPEN,PathOptionsEnum.OBSTACLE,false,true,SurfaceEnum.BARE_FLOOR,false);
-        cleanSweep.traverse(saTest);
-        Mockito.verify(cleanSweep, Mockito.times(2)).moveEast();
-        Mockito.verify(cleanSweep, Mockito.times(2)).setMaxCol();
-        Mockito.verify(cleanSweep, Mockito.times(1)).moveWest();
-        Mockito.verify(cleanSweep, Mockito.times(2)).setMaxRow();
-        Mockito.verify(cleanSweep, Mockito.times(2)).moveSouth();
-        Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
-        assertEquals(1,cleanSweep.getMaxJ());
-        assertEquals(2,cleanSweep.getMaxI());
+    //     saTest = new SensorArray(PathOptionsEnum.OBSTACLE,PathOptionsEnum.OPEN,PathOptionsEnum.OPEN,PathOptionsEnum.OBSTACLE,false,true,SurfaceEnum.BARE_FLOOR,false);
+    //     cleanSweep.traverse(saTest);
+    //     Mockito.verify(cleanSweep, Mockito.times(2)).moveEast();
+    //     Mockito.verify(cleanSweep, Mockito.times(2)).setMaxCol();
+    //     Mockito.verify(cleanSweep, Mockito.times(1)).moveWest();
+    //     Mockito.verify(cleanSweep, Mockito.times(2)).setMaxRow();
+    //     Mockito.verify(cleanSweep, Mockito.times(2)).moveSouth();
+    //     Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
+    //     assertEquals(1,cleanSweep.getMaxJ());
+    //     assertEquals(2,cleanSweep.getMaxI());
 
-    }
+    // }
 
-    @DisplayName("Checking cleaning is done ")
-    @Test
-    void clean() {
-        PrintStream stdout = System.out;
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(byteArrayOutputStream));
-        CleanSweep cleanSweep = new CleanSweep();
-        cleanSweep.clean(saTest);
-        assertEquals("Cleaning...", byteArrayOutputStream.toString().trim());
-    }
+    // @DisplayName("Checking cleaning is done ")
+    // @Test
+    // void clean() {
+    //     PrintStream stdout = System.out;
+    //     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    //     System.setOut(new PrintStream(byteArrayOutputStream));
+    //     CleanSweep cleanSweep = new CleanSweep();
+    //     cleanSweep.clean(saTest);
+    //     assertEquals("Cleaning...", byteArrayOutputStream.toString().trim());
+    // }
 
     @DisplayName("Checking if moveNorth() is called or not")
     @Test
