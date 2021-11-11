@@ -1,5 +1,6 @@
 package se459.extremers.cleanSweepFloorPlan;
 
+import se459.extremers.logger.PrintLog;
 import se459.extremers.Constants;
 import se459.extremers.simulator.CleanSweepSimulator;
 
@@ -7,6 +8,9 @@ import org.springframework.data.geo.Point;
 import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.*;
+
 
 public class CleanSweepRobot {
     
@@ -26,6 +30,10 @@ public class CleanSweepRobot {
     int tripsToStation;    
     FileWriter myWriter;
 
+    // Log
+    PrintLog unityLog;
+    PrintLog logFile;
+
 
     public CleanSweepRobot(CleanSweepSimulator css) {
         this.batteryCharge = Constants.MAX_POWER_CHARGE; 
@@ -38,23 +46,14 @@ public class CleanSweepRobot {
         this.myCSS = css;
         
         this.tripsToStation = 0;
-        try {
-            myWriter = new FileWriter("filename.txt");
-            System.out.println("Successfully wrote to the file.");
-          } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-          }
+
+        unityLog = new PrintLog("UnityDirections.txt");
+        logFile = new PrintLog("Log.txt");
+
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        LocalDateTime now = LocalDateTime.now();
     }
 
-    private void writeStuff(String tmp) {
-        try {
-            myWriter.write(tmp + '\n');
-          } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-          }
-    }
 
     public void cleanHouse(CleanSweepNode node) {
 
@@ -119,17 +118,9 @@ public class CleanSweepRobot {
         System.out.println("Ending power ammount = " + this.batteryCharge);
         System.out.println("Ending capacity ammount = " + this.dirtCapacity);
         System.out.println("Total trips back to station = " + this.tripsToStation);
-
-        try{
-            myWriter.close();
-        }
-        catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-            
-        
-        
+   
+        unityLog.CloseFile();
+        logFile.CloseFile();
 
         //TODO: Change this. Without this line, execution continues past end... investigate
         System.exit(0);
@@ -169,7 +160,7 @@ public class CleanSweepRobot {
         node.visited = true;
         //System.out.println("Visited Node with ID: " + node.id);
         //System.out.println("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
-        writeStuff("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        unityLog.write("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
 
         this.cleanNode(node);
 
@@ -189,6 +180,12 @@ public class CleanSweepRobot {
 
                     node.decreaseDirt(); // this should be a call to the simulator
     
+                    // LOGHERE
+                    String obstaclesString = "(" + "N:" + this.currentNode.northEdge.toString()+ " S:" + this.currentNode.southEdge.toString() +
+                        " E:" + this.currentNode.eastEdge.toString() + " W:" + this.currentNode.westEdge.toString()+")";
+                    logFile.write(logFile.getDateTime() + ", " + this.position.getX()+"/"+this.position.getY() + ", "+ this.direction.toString() + ", "
+                        +  this.currentNode.surface.toString() + ", " + true + ", "+ true + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ false);
+
                     this.decreasePower(powerToClean);
                     this.decreaseCapcity();
                 }
@@ -205,7 +202,7 @@ public class CleanSweepRobot {
         } 
         //System.out.println("Cleaned Node with ID: " + node.id);
         //System.out.println("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
-        writeStuff("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        unityLog.write("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
 
 
         // After we finish cleaning check if we have the power to traverse the highest cost surface AND return home
@@ -246,7 +243,6 @@ public class CleanSweepRobot {
 
     private void traverse(CleanSweepNode fromNode, CleanSweepNode toNode) {
         //System.out.println("Traversing from " + fromNode.id + " to " + toNode.id);
-       //writeStuff("Traversing from " + fromNode.id + " to " + toNode.id);
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(fromNode, toNode);
 
             // Reverse list to get path from fromNode to toNode, then remove first entry since that is current node
@@ -259,14 +255,23 @@ public class CleanSweepRobot {
                 //System.out.println("Pathfinding... Visited node: " + steps.id);
                // System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
 
-                writeStuff("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
-
                 CleanSweepNode prevNode = this.currentNode;
                 this.currentNode = steps;
 
                 this.position = new Point(this.position.getX() + (steps.pos.getX()-this.position.getX()), this.position.getY()+(steps.pos.getY()-this.position.getY()));
                 float movePowerComsumption = calculateMovingPowerComsumption(prevNode,  this.currentNode);
                 decreasePower(movePowerComsumption);
+
+                // LOGHERE
+                boolean currNodeIsChargingStation = steps.isChargingStation;
+                boolean currNodeHasDirt = steps.isClean;
+                String obstaclesString = "(" + "N:" + steps.northEdge.toString()+ " S:" + steps.southEdge.toString() +
+                    " E:" + steps.eastEdge.toString() + " W:" + steps.westEdge.toString()+")";
+
+                logFile.write(logFile.getDateTime() + ", " + this.position.getX()+"/"+this.position.getY() + ", "+ this.direction.toString() + ", "
+                    +  steps.surface.toString() + ", " + false + ", "+ currNodeHasDirt + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ currNodeIsChargingStation);
+               
+                 unityLog.write("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
             }
 
         
