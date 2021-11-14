@@ -1,4 +1,4 @@
-package se459.extremers.cleanSweepFloorPlan;
+package se459.extremers.jarmoveout;
 
 public enum NavigationOptionsEnum {
     NORTH,

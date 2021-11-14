@@ -1,4 +1,4 @@
-package se459.extremers.cleanSweepFloorPlan;
+package se459.extremers.jarmoveout;
 
 public enum surfaceType {
     BARE_FLOOR(1),

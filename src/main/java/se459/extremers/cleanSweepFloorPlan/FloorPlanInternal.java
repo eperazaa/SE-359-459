@@ -1,8 +1,10 @@
 package se459.extremers.cleanSweepFloorPlan;
 
 import java.util.*;
+import floorplan.*;
+import floorplan.Point;
 
-import org.springframework.data.geo.Point;
+
 
 public class FloorPlanInternal {
 
@@ -25,7 +27,7 @@ public class FloorPlanInternal {
         node = new CleanSweepNode(node, pos);
 
         // check if charging station
-        if (node.isChargingStation) {
+        if (node.isIsChargingStation()) {
             this.stations.addFirst(node);
         }
 
@@ -54,7 +56,7 @@ public class FloorPlanInternal {
             node.AssignNorthInternal(tmpNode);
         }
         // checks if north is open and if north position is in unvisited queue
-        if (node.northEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+        if (node.getNorthEdge() == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
             this.unvisited.addFirst(tmpTuple);
         }
 
@@ -67,7 +69,7 @@ public class FloorPlanInternal {
             node.AssignEastInternal(tmpNode);
         }
 
-        if (node.eastEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+        if (node.getEastEdge() == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
             this.unvisited.addFirst(tmpTuple);
         }
 
@@ -79,7 +81,7 @@ public class FloorPlanInternal {
             tmpNode.AssignNorthInternal(node);
             node.AssignSouthInternal(tmpNode);
         }
-        if (node.southEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+        if (node.getSouthEdge() == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
             this.unvisited.addFirst(tmpTuple);
         }
 
@@ -91,7 +93,7 @@ public class FloorPlanInternal {
             tmpNode.AssignEastInternal(node);
             node.AssignWestInternal(tmpNode);
         }
-        if (node.westEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+        if (node.getWestEdge() == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
             this.unvisited.addFirst(tmpTuple);
         }
 
@@ -199,9 +201,9 @@ public class FloorPlanInternal {
         Set<CleanSweepNode> open = new HashSet<CleanSweepNode>();
         Set<CleanSweepNode> closed = new HashSet<CleanSweepNode>();
 
-        start.g = 0;
-        start.h = estimateDistance(start, goal);
-        start.f = start.h;
+        start.setG(0);
+        start.setH(estimateDistance(start, goal));
+        start.setF(start.getH());
 
         open.add(start);
 
@@ -213,7 +215,7 @@ public class FloorPlanInternal {
             }
 
             for (CleanSweepNode node : open) {
-                if (current == null || node.f < current.f) {
+                if (current == null || node.getF() < current.getF()) {
                     current = node;
                 }
             }
@@ -225,23 +227,23 @@ public class FloorPlanInternal {
             open.remove(current);
             closed.add(current);
 
-            for (CleanSweepNode neighbor : current.neighbors) {
+            for (CleanSweepNode neighbor : current.getNeighbors()) {
                 if (neighbor == null) {
                     continue;
                 }
 
-                 int nextG = current.g + neighbor.cost;
+                 int nextG = current.getG() + neighbor.getCost();
 
-                if (nextG < neighbor.g) {
+                if (nextG < neighbor.getG()) {
                     open.remove(neighbor);
                     closed.remove(neighbor);
                 }
 
                 if (!open.contains(neighbor) && !closed.contains(neighbor)) {
-                    neighbor.g = nextG;
-                    neighbor.h = estimateDistance(neighbor, goal);
-                    neighbor.f = neighbor.g + neighbor.h;
-                    neighbor.parent = current;
+                    neighbor.setG(nextG);
+                    neighbor.setH(estimateDistance(neighbor, goal));
+                    neighbor.setF(neighbor.getG() + neighbor.getH());
+                    neighbor.setParent(current);
                     open.add(neighbor);
                 }
             }
@@ -249,9 +251,9 @@ public class FloorPlanInternal {
 
         List<CleanSweepNode> nodes = new ArrayList<CleanSweepNode>();
         CleanSweepNode current = goal;
-        while (current.parent != null) {
+        while (current.getParent() != null) {
             nodes.add(current);
-            current = current.parent;
+            current = current.getParent();
         }
         nodes.add(start);
 
@@ -262,21 +264,21 @@ public class FloorPlanInternal {
 
     private void ResetNodeValues(List<CleanSweepNode> nodes, CleanSweepNode start, CleanSweepNode goal) {
 
-        start.parent = goal.parent = null;
-        start.f = goal.f = 0;
-        start.g = goal.g = 0;
-        start.h = goal.h = 0;
-
+        start.setParent(null); goal.setParent(null);
+        start.setF(0); goal.setF(0);
+        start.setG(0); goal.setG(0);
+        start.setH(0); goal.setH(0);
+        
         for (CleanSweepNode node: nodes) {
-            node.parent = null;
-            node.f  = 0;
-            node.g = 0;
-            node.h  = 0;
+            node.setParent(null); 
+            node.setF(0); 
+            node.setG(0);
+            node.setH(0);
         }
     }
 
     public int estimateDistance(CleanSweepNode node1, CleanSweepNode node2) {
-        double tmp = Math.abs(node1.pos.getX() - node2.pos.getX()) + Math.abs(node1.pos.getY() - node2.pos.getY());
+        double tmp = Math.abs(node1.getPos().getX() - node2.getPos().getX()) + Math.abs(node1.getPos().getY() - node2.getPos().getY());
 
         return (int) tmp;
     }
