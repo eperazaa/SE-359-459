@@ -40,32 +40,32 @@ public class Main {
                 int westID;
                 int currID;
                 try {
-                    northID = currNode.northNode.id;
+                    northID = currNode.getNorthNode().getId();
                 }
                 catch (NullPointerException e) {
                     northID = -1;
                 }
                 try {
-                    eastID = currNode.eastNode.id;
+                    eastID = currNode.getEastNode().getId();;
                 }
                 catch (NullPointerException e) {
                     eastID = -1;
                 }
                 try {
-                    southID = currNode.southNode.id;
+                    southID = currNode.getSouthNode().getId();
                 }
                 catch (NullPointerException e) {
                     southID = -1;
                 }
                 try {
-                    westID = currNode.westNode.id;
+                    westID = currNode.getWestNode().getId();
                 }
                 catch (NullPointerException e) {
                     westID = -1;
                 }
 
                 try {
-                    currID = currNode.id;
+                    currID = currNode.getId();
                 }
                 catch (NullPointerException e) {
                     currID = -1;
@@ -74,7 +74,7 @@ public class Main {
                 //System.out.print("| NodeID: " + currID + " ");
                 System.out.println("Node ID: " + currID);
                 System.out.println(" Connections = (N:" + northID + " E:" + eastID + " S:" + southID + " W:" + westID +")");
-                System.out.println(" Edges = (N:" + currNode.northEdge + " E:" + currNode.eastEdge + " S:" + currNode.southEdge + " W:" + currNode.westEdge +")");
+                System.out.println(" Edges = (N:" + currNode.getNorthEdge() + " E:" + currNode.getEastEdge() + " S:" + currNode.getSouthEdge() + " W:" + currNode.getWestEdge() +")");
             }
             System.out.println();
         }

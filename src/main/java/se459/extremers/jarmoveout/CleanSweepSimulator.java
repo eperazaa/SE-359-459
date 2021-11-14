@@ -1,8 +1,8 @@
-package se459.extremers.simulator;
+package se459.extremers.jarmoveout;
 
 import java.io.FileNotFoundException;
 
-import se459.extremers.cleanSweepFloorPlan.FloorPlanExternal;
+//import se459.extremers.cleanSweepFloorPlan.FloorPlanExternal;
 
 public class CleanSweepSimulator {
     FloorPlanExternal extFloorPlanCopy;

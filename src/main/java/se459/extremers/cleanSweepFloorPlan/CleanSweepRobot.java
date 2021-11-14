@@ -5,10 +5,10 @@ import se459.extremers.Constants;
 import simulator.CleanSweepSimulator;
 import floorplan.*;
 
-import org.springframework.data.geo.Point;
+
 import java.util.*;
 import java.io.FileWriter;
-import java.io.IOException;
+//import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 
@@ -354,7 +354,7 @@ public class CleanSweepRobot {
                     break;
                 case WEST:
                     tmp = this.internalFloorPlan.GetWestNode(this.position);
-                    if (this.currentNode.westEdge.equals(edgeType.OPEN) && tmp == null) {
+                    if (this.currentNode.getWestEdge().equals(edgeType.OPEN) && tmp == null) {
                         foundDirection = true;
                     }
                     break;

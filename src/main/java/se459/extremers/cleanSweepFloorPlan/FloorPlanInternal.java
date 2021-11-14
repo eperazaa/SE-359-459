@@ -232,18 +232,18 @@ public class FloorPlanInternal {
                     continue;
                 }
 
-                 int nextG = current.g + neighbor.cost;
+                 int nextG = current.getG() + neighbor.getCost();
 
-                if (nextG < neighbor.g) {
+                if (nextG < neighbor.getG()) {
                     open.remove(neighbor);
                     closed.remove(neighbor);
                 }
 
                 if (!open.contains(neighbor) && !closed.contains(neighbor)) {
-                    neighbor.g = nextG;
-                    neighbor.h = estimateDistance(neighbor, goal);
-                    neighbor.f = neighbor.g + neighbor.h;
-                    neighbor.parent = current;
+                    neighbor.setG(nextG);
+                    neighbor.setH(estimateDistance(neighbor, goal));
+                    neighbor.setF(neighbor.getG() + neighbor.getH());
+                    neighbor.setParent(current);
                     open.add(neighbor);
                 }
             }
@@ -251,9 +251,9 @@ public class FloorPlanInternal {
 
         List<CleanSweepNode> nodes = new ArrayList<CleanSweepNode>();
         CleanSweepNode current = goal;
-        while (current.parent != null) {
+        while (current.getParent() != null) {
             nodes.add(current);
-            current = current.parent;
+            current = current.getParent();
         }
         nodes.add(start);
 
@@ -264,21 +264,21 @@ public class FloorPlanInternal {
 
     private void ResetNodeValues(List<CleanSweepNode> nodes, CleanSweepNode start, CleanSweepNode goal) {
 
-        start.parent = goal.parent = null;
-        start.f = goal.f = 0;
-        start.g = goal.g = 0;
-        start.h = goal.h = 0;
-
+        start.setParent(null); goal.setParent(null);
+        start.setF(0); goal.setF(0);
+        start.setG(0); goal.setG(0);
+        start.setH(0); goal.setH(0);
+        
         for (CleanSweepNode node: nodes) {
-            node.parent = null;
-            node.f  = 0;
-            node.g = 0;
-            node.h  = 0;
+            node.setParent(null); 
+            node.setF(0); 
+            node.setG(0);
+            node.setH(0);
         }
     }
 
     public int estimateDistance(CleanSweepNode node1, CleanSweepNode node2) {
-        double tmp = Math.abs(node1.pos.getX() - node2.pos.getX()) + Math.abs(node1.pos.getY() - node2.pos.getY());
+        double tmp = Math.abs(node1.getPos().getX() - node2.getPos().getX()) + Math.abs(node1.getPos().getY() - node2.getPos().getY());
 
         return (int) tmp;
     }
