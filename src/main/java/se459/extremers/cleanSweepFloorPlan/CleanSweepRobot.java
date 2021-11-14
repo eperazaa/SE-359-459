@@ -2,7 +2,8 @@ package se459.extremers.cleanSweepFloorPlan;
 
 import se459.extremers.logger.PrintLog;
 import se459.extremers.Constants;
-import se459.extremers.simulator.CleanSweepSimulator;
+import simulator.CleanSweepSimulator;
+import floorplan.*;
 
 import org.springframework.data.geo.Point;
 import java.util.*;
@@ -147,8 +148,8 @@ public class CleanSweepRobot {
 
     private float calculateMovingPowerComsumption(CleanSweepNode prevNode, CleanSweepNode node) {
 
-        int toSurface = node.surface.getUnits();
-        int fromSurface = prevNode.surface.getUnits();
+        int toSurface = node.getSurface().getUnits();
+        int fromSurface = prevNode.getSurface().getUnits();
         return (float) ((fromSurface + toSurface) / 2.0);
     }
 
@@ -157,10 +158,10 @@ public class CleanSweepRobot {
         node = internalFloorPlan.Add(node, position);
         this.currentNode = node;
         
-        node.visited = true;
-        //System.out.println("Visited Node with ID: " + node.id);
-        //System.out.println("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
-        unityLog.write("V," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        node.setVisited(true);
+        //System.out.println("Visited Node with ID: " + node.getId());
+        //System.out.println("V," + node.getId() + "," + this.batteryCharge + "," + this.dirtCapacity);
+        unityLog.write("V," + node.getId() + "," + this.batteryCharge + "," + this.dirtCapacity);
 
         this.cleanNode(node);
 
@@ -171,8 +172,8 @@ public class CleanSweepRobot {
         this.lastVisited = node;
         
         float powerToReturn = calculatePowerToReturn();
-        float powerToClean = checkSurfacePower(node.surface);
-        while(!node.isClean) // this should be a call to the simulator
+        float powerToClean = checkSurfacePower(node.getSurface());
+        while(!node.isClean()) // this should be a call to the simulator
         {
             if (checkCapacity())
             {
@@ -181,10 +182,10 @@ public class CleanSweepRobot {
                     node.decreaseDirt(); // this should be a call to the simulator
     
                     // LOGHERE
-                    String obstaclesString = "(" + "N:" + this.currentNode.northEdge.toString()+ " S:" + this.currentNode.southEdge.toString() +
-                        " E:" + this.currentNode.eastEdge.toString() + " W:" + this.currentNode.westEdge.toString()+")";
+                    String obstaclesString = "(" + "N:" + this.currentNode.getNorthEdge().toString()+ " S:" + this.currentNode.getSouthEdge().toString() +
+                        " E:" + this.currentNode.getEastEdge().toString() + " W:" + this.currentNode.getWestEdge().toString()+")";
                     logFile.write(logFile.getDateTime() + ", " + this.position.getX()+"/"+this.position.getY() + ", "+ this.direction.toString() + ", "
-                        +  this.currentNode.surface.toString() + ", " + true + ", "+ true + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ false);
+                        +  this.currentNode.getSurface().toString() + ", " + true + ", "+ true + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ false);
 
                     this.decreasePower(powerToClean);
                     this.decreaseCapcity();
@@ -200,9 +201,9 @@ public class CleanSweepRobot {
             }
 
         } 
-        //System.out.println("Cleaned Node with ID: " + node.id);
-        //System.out.println("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
-        unityLog.write("C," + node.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+        //System.out.println("Cleaned Node with ID: " + node.getId());
+        //System.out.println("C," + node.getId() + "," + this.batteryCharge + "," + this.dirtCapacity);
+        unityLog.write("C," + node.getId() + "," + this.batteryCharge + "," + this.dirtCapacity);
 
 
         // After we finish cleaning check if we have the power to traverse the highest cost surface AND return home
@@ -242,7 +243,7 @@ public class CleanSweepRobot {
     }
 
     private void traverse(CleanSweepNode fromNode, CleanSweepNode toNode) {
-        //System.out.println("Traversing from " + fromNode.id + " to " + toNode.id);
+        //System.out.println("Traversing from " + fromNode.getId() + " to " + toNode.getId());
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(fromNode, toNode);
 
             // Reverse list to get path from fromNode to toNode, then remove first entry since that is current node
@@ -252,26 +253,26 @@ public class CleanSweepRobot {
 
             for (CleanSweepNode steps : path) {
 
-                //System.out.println("Pathfinding... Visited node: " + steps.id);
-               // System.out.println("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+                //System.out.println("Pathfinding... Visited node: " + steps.getId());
+               // System.out.println("P," + steps.getId() + "," + this.batteryCharge + "," + this.dirtCapacity);
 
                 CleanSweepNode prevNode = this.currentNode;
                 this.currentNode = steps;
 
-                this.position = new Point(this.position.getX() + (steps.pos.getX()-this.position.getX()), this.position.getY()+(steps.pos.getY()-this.position.getY()));
+                this.position = new Point(this.position.getX() + (steps.getPos().getX()-this.position.getX()), this.position.getY()+(steps.getPos().getY()-this.position.getY()));
                 float movePowerComsumption = calculateMovingPowerComsumption(prevNode,  this.currentNode);
                 decreasePower(movePowerComsumption);
 
                 // LOGHERE
-                boolean currNodeIsChargingStation = steps.isChargingStation;
-                boolean currNodeHasDirt = steps.isClean;
-                String obstaclesString = "(" + "N:" + steps.northEdge.toString()+ " S:" + steps.southEdge.toString() +
-                    " E:" + steps.eastEdge.toString() + " W:" + steps.westEdge.toString()+")";
+                boolean currNodeIsChargingStation = steps.isIsChargingStation();
+                boolean currNodeHasDirt = steps.isClean();
+                String obstaclesString = "(" + "N:" + steps.getNorthEdge().toString()+ " S:" + steps.getSouthEdge().toString() +
+                    " E:" + steps.getEastEdge().toString() + " W:" + steps.getWestEdge().toString()+")";
 
                 logFile.write(logFile.getDateTime() + ", " + this.position.getX()+"/"+this.position.getY() + ", "+ this.direction.toString() + ", "
-                    +  steps.surface.toString() + ", " + false + ", "+ currNodeHasDirt + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ currNodeIsChargingStation);
+                    +  steps.getSurface().toString() + ", " + false + ", "+ currNodeHasDirt + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ currNodeIsChargingStation);
                
-                 unityLog.write("P," + steps.id + "," + this.batteryCharge + "," + this.dirtCapacity);
+                 unityLog.write("P," + steps.getId() + "," + this.batteryCharge + "," + this.dirtCapacity);
             }
 
         
@@ -305,7 +306,7 @@ public class CleanSweepRobot {
     
     private float calculatePowerToReturn() {
 
-        //System.out.println("From curr: " + this.currentNode.id + " to lastVistedStation: " + lastVistedChargingStation.id);
+        //System.out.println("From curr: " + this.currentNode.getId() + " to lastVistedStation: " + lastVistedChargingStation.getId());
 
         CleanSweepNode closestChargingStation = this.internalFloorPlan.FindClosestStation(this.currentNode);
         List<CleanSweepNode> path = this.internalFloorPlan.aStar(this.currentNode, closestChargingStation);
@@ -341,13 +342,13 @@ public class CleanSweepRobot {
             switch (this.direction) {
                 case EAST:
                     tmp = this.internalFloorPlan.GetEastNode(this.position);
-                    if (this.currentNode.eastEdge.equals(edgeType.OPEN) && tmp == null) {
+                    if (this.currentNode.getEastEdge().equals(edgeType.OPEN) && tmp == null) {
                         foundDirection = true;
                     }
                     break;
                 case SOUTH:
                     tmp = this.internalFloorPlan.GetSouthNode(this.position);
-                    if (this.currentNode.southEdge.equals(edgeType.OPEN) && tmp == null) {
+                    if (this.currentNode.getSouthEdge().equals(edgeType.OPEN) && tmp == null) {
                         foundDirection = true;
                     }
                     break;
@@ -359,7 +360,7 @@ public class CleanSweepRobot {
                     break;
                 case NORTH:
                     tmp = this.internalFloorPlan.GetNorthNode(this.position);
-                    if (this.currentNode.northEdge.equals(edgeType.OPEN) && tmp == null) {
+                    if (this.currentNode.getNorthEdge().equals(edgeType.OPEN) && tmp == null) {
                         foundDirection = true;
                     }
                     break;

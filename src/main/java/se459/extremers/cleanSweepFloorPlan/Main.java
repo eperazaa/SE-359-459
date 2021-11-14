@@ -1,8 +1,10 @@
 package se459.extremers.cleanSweepFloorPlan;
 
-import se459.extremers.simulator.CleanSweepSimulator;
+import simulator.CleanSweepSimulator;
+import floorplan.*;
 
 import java.io.FileNotFoundException;
+ 
 
 
 public class Main {

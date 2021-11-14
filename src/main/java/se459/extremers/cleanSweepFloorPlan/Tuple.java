@@ -1,4 +1,5 @@
 package se459.extremers.cleanSweepFloorPlan;
+import floorplan.*;
 
 public class Tuple {
     public final CleanSweepNode node;

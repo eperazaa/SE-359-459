@@ -1,8 +1,10 @@
 package se459.extremers.cleanSweepFloorPlan;
 
 import java.util.*;
+import floorplan.*;
+import floorplan.Point;
 
-import org.springframework.data.geo.Point;
+
 
 public class FloorPlanInternal {
 
@@ -25,7 +27,7 @@ public class FloorPlanInternal {
         node = new CleanSweepNode(node, pos);
 
         // check if charging station
-        if (node.isChargingStation) {
+        if (node.isIsChargingStation()) {
             this.stations.addFirst(node);
         }
 
@@ -54,7 +56,7 @@ public class FloorPlanInternal {
             node.AssignNorthInternal(tmpNode);
         }
         // checks if north is open and if north position is in unvisited queue
-        if (node.northEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+        if (node.getNorthEdge() == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
             this.unvisited.addFirst(tmpTuple);
         }
 
@@ -67,7 +69,7 @@ public class FloorPlanInternal {
             node.AssignEastInternal(tmpNode);
         }
 
-        if (node.eastEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+        if (node.getEastEdge() == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
             this.unvisited.addFirst(tmpTuple);
         }
 
@@ -79,7 +81,7 @@ public class FloorPlanInternal {
             tmpNode.AssignNorthInternal(node);
             node.AssignSouthInternal(tmpNode);
         }
-        if (node.southEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+        if (node.getSouthEdge() == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
             this.unvisited.addFirst(tmpTuple);
         }
 
@@ -91,7 +93,7 @@ public class FloorPlanInternal {
             tmpNode.AssignEastInternal(node);
             node.AssignWestInternal(tmpNode);
         }
-        if (node.westEdge == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
+        if (node.getWestEdge() == edgeType.OPEN && tmpNode == null && !this.map.containsKey(checkPos) && !this.unvisited.contains(tmpTuple)) {
             this.unvisited.addFirst(tmpTuple);
         }
 
@@ -199,9 +201,9 @@ public class FloorPlanInternal {
         Set<CleanSweepNode> open = new HashSet<CleanSweepNode>();
         Set<CleanSweepNode> closed = new HashSet<CleanSweepNode>();
 
-        start.g = 0;
-        start.h = estimateDistance(start, goal);
-        start.f = start.h;
+        start.setG(0);
+        start.setH(estimateDistance(start, goal));
+        start.setF(start.getH());
 
         open.add(start);
 
@@ -213,7 +215,7 @@ public class FloorPlanInternal {
             }
 
             for (CleanSweepNode node : open) {
-                if (current == null || node.f < current.f) {
+                if (current == null || node.getF() < current.getF()) {
                     current = node;
                 }
             }
@@ -225,7 +227,7 @@ public class FloorPlanInternal {
             open.remove(current);
             closed.add(current);
 
-            for (CleanSweepNode neighbor : current.neighbors) {
+            for (CleanSweepNode neighbor : current.getNeighbors()) {
                 if (neighbor == null) {
                     continue;
                 }

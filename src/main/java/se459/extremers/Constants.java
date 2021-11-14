@@ -3,7 +3,7 @@ package se459.extremers;
 import org.springframework.data.geo.Point;
 
 import se459.extremers.cleanSweepFloorPlan.ModeOptions;
-import se459.extremers.cleanSweepFloorPlan.NavigationOptionsEnum;
+import floorplan.NavigationOptionsEnum;
 
 public class Constants {
     public static final float MAX_POWER_CHARGE = 250f;
