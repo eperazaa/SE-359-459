@@ -187,6 +187,9 @@ public class CleanSweepRobot {
                     logFile.write(logFile.getDateTime() + ", " + this.position.getX()+"/"+this.position.getY() + ", "+ this.direction.toString() + ", "
                         +  this.currentNode.getSurface().toString() + ", " + true + ", "+ true + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ false);
 
+                    System.out.println(logFile.getDateTime() + ", " + this.position.getX()+"/"+this.position.getY() + ", "+ this.direction.toString() + ", "
+                        +  this.currentNode.getSurface().toString() + ", " + true + ", "+ true + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ false);
+
                     this.decreasePower(powerToClean);
                     this.decreaseCapcity();
                 }
@@ -272,6 +275,10 @@ public class CleanSweepRobot {
                 logFile.write(logFile.getDateTime() + ", " + this.position.getX()+"/"+this.position.getY() + ", "+ this.direction.toString() + ", "
                     +  steps.getSurface().toString() + ", " + false + ", "+ currNodeHasDirt + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ currNodeIsChargingStation);
                
+                System.out.println(logFile.getDateTime() + ", " + this.position.getX()+"/"+this.position.getY() + ", "+ this.direction.toString() + ", "
+                +  steps.getSurface().toString() + ", " + false + ", "+ currNodeHasDirt + ", "+ obstaclesString + ", "+ this.batteryCharge + ", "+ currNodeIsChargingStation);
+           
+
                  unityLog.write("P," + steps.getId() + "," + this.batteryCharge + "," + this.dirtCapacity);
             }
 
