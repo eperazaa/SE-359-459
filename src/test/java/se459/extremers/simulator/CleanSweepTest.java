@@ -43,23 +43,6 @@ class CleanSweepTest {
 
     }
 
-    // @DisplayName("Checking simulateFromFile() ")
-    // @Test
-    // void simulateFromFile() throws FileNotFoundException {
-    //         CleanSweep cleanSweep = Mockito.spy(new CleanSweep());
-    //         cleanSweep.simulateFromFile("./src/test/fileTest.csv");
-    //         Mockito.verify(cleanSweep, Mockito.times(1)).clean(Mockito.any());
-    //         Mockito.verify(cleanSweep, Mockito.times(1)).traverse(Mockito.any());
-    //         Mockito.verify(cleanSweep, Mockito.times(1)).moveEast();
-    //         Mockito.verify(cleanSweep, Mockito.times(1)).setMaxCol();
-    //         Mockito.verify(cleanSweep, Mockito.times(0)).moveWest();
-    //         Mockito.verify(cleanSweep, Mockito.times(0)).setMaxRow();
-    //         Mockito.verify(cleanSweep, Mockito.times(0)).moveSouth();
-    //         Mockito.verify(cleanSweep, Mockito.times(0)).moveNorth();
-    //         assertEquals(2,cleanSweep.getMaxJ());
-    //         assertEquals(1,cleanSweep.getMaxI());
-    // }
-
     @DisplayName("Checking calls of printFloorPlan()")
     @Test
     void printFloorPlan() throws FileNotFoundException {
