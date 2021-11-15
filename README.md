@@ -11,7 +11,7 @@ AGILE DEVELOPMENT CLASS - TEAM 2 - DEPAUL UNIVERSITY
 - `cd src/main/frontend` from root
 - `npm i`
     - loads all dependencies from package.json
-    - only required once in local environemtn
+    - only required once in local environment
 
 ### run frontend
 - `cd src/main/frontend` from root
