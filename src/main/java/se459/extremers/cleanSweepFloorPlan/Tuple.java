@@ -1,4 +1,5 @@
 package se459.extremers.cleanSweepFloorPlan;
+import floorplan.*;
 
 public class Tuple {
     public final CleanSweepNode node;
@@ -10,7 +11,7 @@ public class Tuple {
 
     @Override
     public boolean equals(Object tmp) {
-        return (this.node.id == ((Tuple)tmp).node.id && this.dir == ((Tuple)tmp).dir);
+        return (this.node.getId() == ((Tuple)tmp).node.getId() && this.dir == ((Tuple)tmp).dir);
     }
     
 }

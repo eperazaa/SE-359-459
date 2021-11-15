@@ -1,8 +1,10 @@
 package se459.extremers.cleanSweepFloorPlan;
 
-import se459.extremers.simulator.CleanSweepSimulator;
+import simulator.CleanSweepSimulator;
+import floorplan.*;
 
 import java.io.FileNotFoundException;
+ 
 
 
 public class Main {
@@ -10,15 +12,15 @@ public class Main {
     
         // This is the external map of the house that the robot is not aware of
         int maxCol = 18;
-        int maxRow = 18;
+        int maxRow = 22;
         //FloorPlanExternal externalFloorPlan = new FloorPlanExternal(maxCol, maxRow, "./src/test/file copy.csv");
-        String path = "./src/test/extTree_SampleFloorMap_4.csv";
+        String path = "./src/test/extTree_SampleFloorMap_v3.csv";
         //PrintFloorPlan(externalFloorPlan);
         
         // This is where we connect the two and start
        
         CleanSweepSimulator simulator = new CleanSweepSimulator(maxCol, maxRow, path);
-        CleanSweepNode startingPoint = simulator.getExternalFloorPlan().GetNodeFromXY(17, 9);
+        CleanSweepNode startingPoint = simulator.getExternalFloorPlan().GetNodeFromXY(0, 13);
         //simulator.loadFloorPlan(maxCol, maxRow, path);
 
         CleanSweepRobot robot = new CleanSweepRobot(simulator);
@@ -38,32 +40,32 @@ public class Main {
                 int westID;
                 int currID;
                 try {
-                    northID = currNode.northNode.id;
+                    northID = currNode.getNorthNode().getId();
                 }
                 catch (NullPointerException e) {
                     northID = -1;
                 }
                 try {
-                    eastID = currNode.eastNode.id;
+                    eastID = currNode.getEastNode().getId();;
                 }
                 catch (NullPointerException e) {
                     eastID = -1;
                 }
                 try {
-                    southID = currNode.southNode.id;
+                    southID = currNode.getSouthNode().getId();
                 }
                 catch (NullPointerException e) {
                     southID = -1;
                 }
                 try {
-                    westID = currNode.westNode.id;
+                    westID = currNode.getWestNode().getId();
                 }
                 catch (NullPointerException e) {
                     westID = -1;
                 }
 
                 try {
-                    currID = currNode.id;
+                    currID = currNode.getId();
                 }
                 catch (NullPointerException e) {
                     currID = -1;
@@ -72,7 +74,7 @@ public class Main {
                 //System.out.print("| NodeID: " + currID + " ");
                 System.out.println("Node ID: " + currID);
                 System.out.println(" Connections = (N:" + northID + " E:" + eastID + " S:" + southID + " W:" + westID +")");
-                System.out.println(" Edges = (N:" + currNode.northEdge + " E:" + currNode.eastEdge + " S:" + currNode.southEdge + " W:" + currNode.westEdge +")");
+                System.out.println(" Edges = (N:" + currNode.getNorthEdge() + " E:" + currNode.getEastEdge() + " S:" + currNode.getSouthEdge() + " W:" + currNode.getWestEdge() +")");
             }
             System.out.println();
         }

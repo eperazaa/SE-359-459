@@ -43,7 +43,7 @@ function ContactUs() {
                     <Col xs={0} md={3}/>
                     <Col xs={12} md={6}>
                         <Form style={{textAlign:"left", background:"#5865F2", borderRadius:"20px", padding:80}}>
-                            <h2 class="pb-4" style={{textAlign:"center", color:"#F6F6F6"}}>
+                            <h2 className="pb-4" style={{textAlign:"center", color:"#F6F6F6"}}>
                                 Contact Us
                             </h2>
                             <Form.Group className="my-4" controlId="formBasicEmail">
